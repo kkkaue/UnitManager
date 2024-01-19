@@ -46,7 +46,7 @@ class UnitController extends Controller
             'longitude'   => $request->longitude,
         ]);
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('success', 'Unidade criada com sucesso.');
     }
 
     /**
