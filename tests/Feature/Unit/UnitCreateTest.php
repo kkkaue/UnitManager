@@ -138,3 +138,103 @@ it('should return error when email format is invalid', function () {
 
     expect($response)->assertSessionHasErrors(['email' => 'The email field must be a valid email address.']);
 });
+
+it('should return error when latitude format is invalid', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => 'Unit Test',
+        'description' => 'Description of Unit Test',
+        'email'       => 'unit@test.com',
+        'phone'       => '123456789',
+        'latitude'    => 'invalid-latitude-format',
+        'longitude'   => -46.6333094,
+    ]);
+
+    expect($response)->assertSessionHasErrors(['latitude' => 'The latitude field must be a number.']);
+});
+
+it('should return error when longitude format is invalid', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => 'Unit Test',
+        'description' => 'Description of Unit Test',
+        'email'       => 'unit@test.com',
+        'phone'       => '123456789',
+        'latitude'    => -23.5505199,
+        'longitude'   => 'invalid-longitude-format',
+    ]);
+
+    expect($response)->assertSessionHasErrors(['longitude' => 'The longitude field must be a number.']);
+});
+
+it('should return error when unit name is longer than 255 characters', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => str_repeat('a', 256),
+        'description' => 'Description of Unit Test',
+        'email'       => 'unit@test.com',
+        'phone'       => '123456789',
+        'latitude'    => -23.5505199,
+        'longitude'   => -46.6333094,
+    ]);
+
+    expect($response)->assertSessionHasErrors(['name' => 'The name field must not be greater than 255 characters.']);
+
+    $unit = Unit::where('name', str_repeat('a', 256))->first();
+    expect($unit)->toBeNull();
+});
+
+it('should return error when unit email is longer than 255 characters', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => 'Unit Test',
+        'description' => 'Description of Unit Test',
+        'email'       => str_repeat('a', 256) . '@teste.com',
+        'phone'       => '123456789',
+        'latitude'    => -23.5505199,
+        'longitude'   => -46.6333094,
+    ]);
+
+    expect($response)->assertSessionHasErrors(['email' => 'The email field must not be greater than 255 characters.']);
+
+    $unit = Unit::where('email', str_repeat('a', 256))->first();
+    expect($unit)->toBeNull();
+});
+
+it('should return error when unit phone is longer than 255 characters', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => 'Unit Test',
+        'description' => 'Description of Unit Test',
+        'email'       => 'unit@test.com',
+        'phone'       => str_repeat('a', 256),
+        'latitude'    => -23.5505199,
+        'longitude'   => -46.6333094,
+    ]);
+
+    expect($response)->assertSessionHasErrors(['phone' => 'The phone field must not be greater than 255 characters.']);
+
+    $unit = Unit::where('phone', str_repeat('a', 256))->first();
+    expect($unit)->toBeNull();
+});
+
+it('should return error when unit email is not unique', function () {
+    $user = User::factory()->create();
+    Unit::factory()->create(['email' => 'unit@test.com']);
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => 'Unit Test',
+        'description' => 'Description of Unit Test',
+        'email'       => 'unit@test.com',
+        'phone'       => '123456789',
+        'latitude'    => -23.5505199,
+        'longitude'   => -46.6333094,
+    ]);
+
+    expect($response)->assertSessionHasErrors(['email' => 'The email has already been taken.']);
+});
