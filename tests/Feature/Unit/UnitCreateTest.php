@@ -3,8 +3,6 @@
 use App\Models\Unit;
 use App\Models\User;
 
-use function Pest\Laravel\post;
-
 it('should be able to create a unit', function () {
     $user = User::factory()->create();
 
@@ -60,11 +58,11 @@ it('should return error when unit description is not provided', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->post(route('units.store'), [
-        'name'     => 'Unit Test',
-        'email'       => 'unit@test.com',
-        'phone'       => '123456789',
-        'latitude'    => -23.5505199,
-        'longitude'   => -46.6333094,
+        'name'      => 'Unit Test',
+        'email'     => 'unit@test.com',
+        'phone'     => '123456789',
+        'latitude'  => -23.5505199,
+        'longitude' => -46.6333094,
     ]);
 
     expect($response)->assertSessionHasErrors(['description' => 'The description field is required.']);
