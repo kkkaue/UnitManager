@@ -31,12 +31,11 @@ class UnitController extends Controller
         $request->validate([
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'email'       => ['required', 'email', 'max:255'],
+            'email'       => ['required', 'email', 'max:255', 'unique:units'],
             'phone'       => ['required', 'string', 'max:255'],
             'latitude'    => ['required', 'numeric'],
             'longitude'   => ['required', 'numeric'],
         ]);
-
         Unit::create([
             'name'        => $request->name,
             'description' => $request->description,
@@ -46,7 +45,7 @@ class UnitController extends Controller
             'longitude'   => $request->longitude,
         ]);
 
-        return redirect()->route('home');
+        return redirect()->route('home')->with('success', 'Unidade criada com sucesso.');
     }
 
     /**
@@ -70,7 +69,18 @@ class UnitController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name'        => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'email'       => ['required', 'email', 'max:255', 'unique:units'],
+            'phone'       => ['required', 'string', 'max:255'],
+            'latitude'    => ['required', 'numeric'],
+            'longitude'   => ['required', 'numeric'],
+        ]);
+        $unit = Unit::findOrFail($id);
+        $unit->update($request->all());
+
+        return redirect()->route('home')->with('success', 'Unidade atualizada com sucesso.');
     }
 
     /**
@@ -78,6 +88,9 @@ class UnitController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $unit = Unit::findOrFail($id);
+        $unit->delete();
+
+        return redirect()->route('home')->with('success', 'Unidade excluída com sucesso.');
     }
 }
