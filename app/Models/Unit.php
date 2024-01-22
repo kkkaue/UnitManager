@@ -28,7 +28,9 @@ class Unit extends Model
     {
         return $this->hasMany(Unit::class, 'parent_id');
     }
-
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function allChildren()
     {
         return $this->children()->with('allChildren');
