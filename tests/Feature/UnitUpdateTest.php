@@ -8,7 +8,7 @@ it('should be able to update a unit', function () {
     $unit = Unit::factory()->create();
 
     $updatedData = [
-        'name' => 'Unit Test Updated',
+        'name'        => 'Unit Test Updated',
         'description' => 'Description of Unit Test Updated',
         'email'       => 'unit@test.com',
         'phone'       => '123456789',
@@ -19,7 +19,7 @@ it('should be able to update a unit', function () {
     $response = $this->actingAs($user)->putJson(route('units.update', $unit->id), $updatedData);
 
     $response
-        ->assertRedirect(route('home'))
+        ->assertRedirect(route('dashboard'))
         ->assertSessionHas('success', 'Unidade atualizada com sucesso.');
 
     $unit->refresh();
@@ -30,7 +30,7 @@ it('should redirect unauthenticated user to login page', function () {
     $unit = Unit::factory()->create();
 
     $response = $this->putJson(route('units.update', $unit->id), [
-        'name' => 'Unit Test Updated',
+        'name'        => 'Unit Test Updated',
         'description' => 'Description of Unit Test Updated',
     ]);
 
@@ -64,7 +64,7 @@ it('should return error when unit email is not provided', function () {
     $unit = Unit::factory()->create();
 
     $response = $this->actingAs($user)->putJson(route('units.update', $unit->id), [
-        'name' => 'Unit Test Updated',
+        'name'        => 'Unit Test Updated',
         'description' => 'Description of Unit Test Updated',
     ]);
 
@@ -76,9 +76,9 @@ it('should return error when unit email is not valid', function () {
     $unit = Unit::factory()->create();
 
     $response = $this->actingAs($user)->putJson(route('units.update', $unit->id), [
-        'name' => 'Unit Test Updated',
+        'name'        => 'Unit Test Updated',
         'description' => 'Description of Unit Test Updated',
-        'email' => 'invalid-email',
+        'email'       => 'invalid-email',
     ]);
 
     $response->assertJsonValidationErrors(['email' => 'The email field must be a valid email address.']);
@@ -89,9 +89,9 @@ it('should return error when unit phone is not provided', function () {
     $unit = Unit::factory()->create();
 
     $response = $this->actingAs($user)->putJson(route('units.update', $unit->id), [
-        'name' => 'Unit Test Updated',
+        'name'        => 'Unit Test Updated',
         'description' => 'Description of Unit Test Updated',
-        'email' => 'unit@test.com',
+        'email'       => 'unit@test.com',
     ]);
 
     $response->assertJsonValidationErrors(['phone' => 'The phone field is required.']);
@@ -102,9 +102,9 @@ it('should return error when unit latitude is not provided', function () {
     $unit = Unit::factory()->create();
 
     $response = $this->actingAs($user)->putJson(route('units.update', $unit->id), [
-        'name' => 'Unit Test Updated',
+        'name'        => 'Unit Test Updated',
         'description' => 'Description of Unit Test Updated',
-        'email' => 'unit@test.com'
+        'email'       => 'unit@test.com'
     ]);
 
     $response->assertJsonValidationErrors(['latitude' => 'The latitude field is required.']);
@@ -115,10 +115,10 @@ it('should return error when unit latitude is not valid', function () {
     $unit = Unit::factory()->create();
 
     $response = $this->actingAs($user)->putJson(route('units.update', $unit->id), [
-        'name' => 'Unit Test Updated',
+        'name'        => 'Unit Test Updated',
         'description' => 'Description of Unit Test Updated',
-        'email' => 'unit@test.com',
-        'latitude' => 'invalid-latitude',
+        'email'       => 'unit@test.com',
+        'latitude'    => 'invalid-latitude',
     ]);
 
     $response->assertJsonValidationErrors(['latitude' => 'The latitude field must be a number.']);
@@ -130,9 +130,9 @@ it('should return error when unit longitude is not provided', function () {
 
     $response = $this->actingAs($user)
         ->putJson(route('units.update', $unit->id), [
-            'name' => 'Unit Test Updated',
+            'name'        => 'Unit Test Updated',
             'description' => 'Description of Unit Test Updated',
-            'email' => 'unit@test.com'
+            'email'       => 'unit@test.com'
         ]);
 
     $response->assertJsonValidationErrors(['longitude' => 'The longitude field is required.']);
@@ -145,10 +145,10 @@ it('should return error when unit longitude is not valid', function () {
 
     $response = $this->actingAs($user)
         ->putJson(route('units.update', $unit->id), [
-            'name' => 'Unit Test Updated',
+            'name'        => 'Unit Test Updated',
             'description' => 'Description of Unit Test Updated',
-            'email' => 'unit@test.com',
-            'longitude' => 'invalid-longitude',
+            'email'       => 'unit@test.com',
+            'longitude'   => 'invalid-longitude',
         ]);
 
     $response->assertJsonValidationErrors(['longitude' => 'The longitude field must be a number.']);
@@ -159,12 +159,12 @@ it('should return error when unit does not exist', function () {
 
     $response = $this->actingAs($user)
         ->putJson(route('units.update', 'invalid-id'), [
-            'name' => 'Unit Test Updated',
+            'name'        => 'Unit Test Updated',
             'description' => 'Description of Unit Test Updated',
-            'email' => 'unit@test.com',
-            'phone' => '123456789',
-            'latitude' => -23.5505199,
-            'longitude' => -46.6333094,
+            'email'       => 'unit@test.com',
+            'phone'       => '123456789',
+            'latitude'    => -23.5505199,
+            'longitude'   => -46.6333094,
         ]);
 
     $response->assertNotFound();

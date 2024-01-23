@@ -15,7 +15,7 @@ it('should be able to create a unit', function () {
         'longitude'   => -46.6333094,
     ]);
     expect($response)
-        ->assertRedirect(route('home'))
+        ->assertRedirect(route('dashboard'))
         ->assertSessionHas('success', 'Unidade criada com sucesso.');
 
     $unit = Unit::where('name', 'Unit Test')->first();

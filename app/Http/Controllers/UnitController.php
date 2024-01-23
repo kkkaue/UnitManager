@@ -50,7 +50,7 @@ class UnitController extends Controller
             'longitude'   => $request->longitude,
         ]);
 
-        return redirect()->route('home')->with('success', 'Unidade criada com sucesso.');
+        return redirect()->route('dashboard')->with('success', 'Unidade criada com sucesso.');
     }
 
     /**
@@ -85,7 +85,7 @@ class UnitController extends Controller
         $unit = Unit::findOrFail($id);
         $unit->update($request->all());
 
-        return redirect()->route('home')->with('success', 'Unidade atualizada com sucesso.');
+        return redirect()->route('dashboard')->with('success', 'Unidade atualizada com sucesso.');
     }
 
     /**
@@ -96,6 +96,6 @@ class UnitController extends Controller
         $unit = Unit::findOrFail($id);
         $unit->delete();
 
-        return redirect()->route('home')->with('success', 'Unidade excluída com sucesso.');
+        return redirect()->route('dashboard')->with('success', 'Unidade excluída com sucesso.');
     }
 }
