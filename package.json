@@ -16,5 +16,11 @@
         "tailwindcss": "^3.2.1",
         "vite": "^5.0.0",
         "vue": "^3.4.0"
+    },
+    "dependencies": {
+        "@vue-flow/background": "^1.2.0",
+        "@vue-flow/controls": "^1.1.0",
+        "@vue-flow/core": "^1.29.1",
+        "@vue-flow/minimap": "^1.4.0"
     }
 }
