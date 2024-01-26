@@ -15,42 +15,41 @@ const props = defineProps({
     },
 });
 
-let levelY = 0;
-let indexX = 0;
-const nodeDistance = { x: 200, y: 100 }; // Distância entre os nós
-const rootNodePosition = { x: 500, y: 0 }; // Posição do nó raiz
+let currentLevel = 0;
+const DISTANCE_BETWEEN_NODES = { x: 200, y: 100 };
+const ROOT_NODE_POSITION = { x: 500, y: 0 };
+const parentPositions = {};
 
-// Função para gerar posição baseada no nível e índice
-function positionBasedOnTreeLevel(level, index, total, isRoot = false) {
-    if (isRoot) {
-        return rootNodePosition;
-    }
-
-    const middle = Math.floor(total / 2);
-    const offset = (index - middle) * nodeDistance.x;
+function calculateNodePosition(level, index, totalSiblings, parentPosition) {
+    const middleSiblingIndex = (totalSiblings-1) / 2;
+    const horizontalOffset = (index - middleSiblingIndex) * DISTANCE_BETWEEN_NODES.x;
 
     return {
-        x: rootNodePosition.x + offset,
-        y: level * nodeDistance.y,
+        x: parentPosition.x + horizontalOffset,
+        y: level * DISTANCE_BETWEEN_NODES.y,
     };
 }
 
-// Função para transformar os dados do backend
-function transformData(data) {
+function transformBackendData(data) {
     const nodes = [];
     const edges = [];
 
-    function traverse(node, parentId = null, level = 0) {
-        const isRoot = parentId === null;
+    function traverse(node, parent = node, parentId = null, level = 0, index = 0) {
+        const isRootNode = parentId === null;
+        const parentPosition = isRootNode ? ROOT_NODE_POSITION : parentPositions[parentId];
+        const totalSiblings = parent.all_children ? parent.all_children.length : 0;
+        const nodePosition = isRootNode ? ROOT_NODE_POSITION : calculateNodePosition(level, index, totalSiblings, parentPosition);
+
         const newNode = {
             id: node.id.toString(),
             label: node.name,
-            position: positionBasedOnTreeLevel(level, indexX, node.all_children ? node.all_children.length : 0, isRoot),
+            position: nodePosition,
         };
-
+        
         nodes.push(newNode);
+        parentPositions[node.id] = newNode.position;
 
-        if (!isRoot) {
+        if (!isRootNode) {
             edges.push({
                 id: `e${parentId}-${node.id}`,
                 source: parentId.toString(),
@@ -60,12 +59,12 @@ function transformData(data) {
         }
 
         if (node.all_children) {
-            levelY++;
+            currentLevel++;
             let childIndex = 0;
             for (const child of node.all_children) {
-                traverse(child, node.id, levelY, childIndex++);
+                traverse(child, node, node.id, currentLevel, childIndex++);
             }
-            levelY--;
+            currentLevel--;
         }
     }
 
@@ -76,10 +75,9 @@ function transformData(data) {
     return { nodes, edges };
 }
 
-// Uso da função
 const backendData = props.units;
 
-const { nodes, edges } = useVueFlow(transformData(backendData));
+const { nodes, edges } = useVueFlow(transformBackendData(backendData));
 
 onMounted(() => {
     console.log(nodes.value);
