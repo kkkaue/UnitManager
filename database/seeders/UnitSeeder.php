@@ -94,6 +94,24 @@ class UnitSeeder extends Seeder
                 'longitude'   => '45.6789',
                 'parent_id'   => '2',
             ],
+            [
+                'name'        => 'DFINC - Orçamento',
+                'description' => 'Description for Unit 10',
+                'email'       => 'email@test10.com',
+                'phone'       => '1234567890',
+                'latitude'    => '12.3456',
+                'longitude'   => '45.6789',
+                'parent_id'   => '4',
+            ],
+            [
+                'name'        => 'DFINC - Finanças',
+                'description' => 'Description for Unit 11',
+                'email'       => 'email@test11.com',
+                'phone'       => '1234567890',
+                'latitude'    => '12.3456',
+                'longitude'   => '45.6789',
+                'parent_id'   => '4',
+            ],
         ]);
     }
 }
