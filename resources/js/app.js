@@ -1,10 +1,5 @@
 import './bootstrap';
 import '../css/app.css';
-// Importando CSS do PrimeVue e PrimeIcons
-import 'primevue/resources/themes/saga-blue/theme.css'       // Tema
-import 'primevue/resources/primevue.min.css'                 // Core CSS
-import 'primeicons/primeicons.css'
-import PrimeVue from 'primevue/config';
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
@@ -19,7 +14,6 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(PrimeVue)
             .use(ZiggyVue)
             .mount(el);
     },
