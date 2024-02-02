@@ -44,26 +44,6 @@ const transformUnits = (units) => {
     return result;
 };
 
-onMounted(() => {
-    const transformedUnits = transformUnits(props.units);
-    const myDiagram = new go.Diagram("myDiagramDiv", {
-        "undoManager.isEnabled": true,
-        layout: new go.TreeLayout({ angle: 90, layerSpacing: 35 })
-    });
-
-    myDiagram.nodeTemplate = createNode("Default Text");
-
-    myDiagram.linkTemplate = new go.Link({ 
-        routing: go.Link.Orthogonal, corner: 5 
-    }).add( new go.Shape({ 
-            strokeWidth: 1,
-            stroke: "#d1d5db", 
-        }))
-    myDiagram.model = new go.TreeModel(transformedUnits);
-
-    myDiagram.zoomToFit();
-});
-
 const createNode = (text) => {
     const node = new go.Node("Auto", {
         background: "#ffffff",
@@ -165,6 +145,28 @@ const cancelChanges = () => {
     myDiagram.zoomToFit();
     hierarchyChanged.value = false;
 };
+
+onMounted(() => {
+    const transformedUnits = transformUnits(props.units);
+    const myDiagram = new go.Diagram("myDiagramDiv", {
+        "undoManager.isEnabled": true,
+        layout: new go.TreeLayout({ angle: 90, layerSpacing: 35 })
+    });
+
+    myDiagram.nodeTemplate = createNode("Default Text");
+
+    myDiagram.linkTemplate = new go.Link({ 
+        routing: go.Link.Orthogonal, corner: 5 
+    }).add( new go.Shape({ 
+            strokeWidth: 1,
+            stroke: "#d1d5db", 
+        }))
+    myDiagram.model = new go.TreeModel(transformedUnits);
+
+    myDiagram.zoomToFit();
+});
+
+
 </script>
 
 <template>
@@ -176,7 +178,7 @@ const cancelChanges = () => {
         </template>
 
         <div class="py-12">
-                <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
+            <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
                 <div class="w-full h-3/5" @hierarchyChanged="hierarchyChanged = true">
                     <div id="myDiagramDiv" class="bg-gray-100 border border-gray-200 rounded-md shadow-md fon" style="width: 100%; height: 100%;">
                     </div>
