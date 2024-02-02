@@ -88,6 +88,20 @@ class UnitController extends Controller
         return redirect()->route('dashboard')->with('success', 'Unidade atualizada com sucesso.');
     }
 
+    public function updateHierarchy(Request $request)
+    {
+        foreach ($request->units as $update) {
+            if (!isset($update['unit_id'])) {
+                return redirect()->back()->with('error', 'Dados inválidos recebidos.');
+            }
+    
+            $unit = Unit::findOrFail($update['unit_id']);
+            $unit->update(['parent_id' => $update['parent_id'] ?? null]);
+        }
+        
+        return redirect()->back()->with('success', 'Hierarquia de unidades atualizada com sucesso.');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
