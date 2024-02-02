@@ -52,6 +52,15 @@ const createNode = (text) => {
         shadowColor: "rgba(0, 0, 0, 0.3)",
         shadowOffset: new go.Point(3, 3),
         shadowBlur: 5,
+        zOrder: 1,
+        selectionChanged: p => {
+            // para sobrepor os outros nós caso esteja selecionado
+            if (p.isSelected) {
+                p.layerName = "Foreground";
+            } else {
+                p.layerName = "";
+            }
+        }
     }).add(
         new go.Shape("RoundedRectangle", {
             name: "RoundedRectangle",
@@ -75,16 +84,15 @@ const createNode = (text) => {
     };
 
     // Adiciona o efeito de arrastar e soltar
+
     node.mouseDragEnter = function(e, obj) {
         obj.part.findObject("RoundedRectangle").fill = "#f3f4f6";
         obj.part.findObject("RoundedRectangle").stroke = "#2563eb";
-        obj.part.layerName = "Background";
     };
 
     node.mouseDragLeave = function(e, obj) {
         obj.part.findObject("RoundedRectangle").fill = "#ffffff";
         obj.part.findObject("RoundedRectangle").stroke = "#000000";
-        obj.part.layerName = "Foreground";
     };
 
     node.mouseDrop = function(e, obj) {
