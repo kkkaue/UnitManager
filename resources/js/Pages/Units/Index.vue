@@ -3,6 +3,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { defineProps, ref, onMounted } from 'vue';
 import { Head } from '@inertiajs/vue3';
 
+import axios from 'axios';
+
+import { Button } from '@/Components/ui/button'
+
+/* define a propriedade units que será recebida do componente pai */
 const props = defineProps({
     units: {
         type: Array,
@@ -10,9 +15,12 @@ const props = defineProps({
     },
 });
 
+/* define as variáveis que serão utilizadas no componente */
 const newNodeName = ref('');
 const newNodeParent = ref('');
+const hierarchyChanged = ref(false);
 
+/* define os métodos que serão utilizados no componente */
 const transformUnits = (units) => {
     let result = [];
 
@@ -107,6 +115,8 @@ const createNode = (text) => {
             draggedNode.data.parent = droppedOnNode.data.key;
             e.diagram.model.updateTargetBindings(draggedNode.data);
             e.diagram.rebuildParts();
+
+            handleHierarchyChanged();
         }
     };
 
@@ -122,6 +132,39 @@ const addValue = (name, parent) => {
     newNodeName.value = '';
     newNodeParent.value = '';
 };
+
+const handleHierarchyChanged = () => {
+    hierarchyChanged.value = true;
+};
+
+const saveChanges = async () => {
+    const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
+    const data = myDiagram.model.nodeDataArray;
+    const units = data.map(unit => {
+        return {
+            unit_id: unit.key,
+            parent_id: unit.parent,
+        };
+    });
+    
+    try {
+        await axios.post('/units/update-hierarchy', { units });
+        hierarchyChanged.value = false;
+    } catch (error) {
+        console.error(error);
+    }
+
+    myDiagram.zoomToFit();
+};
+
+const cancelChanges = () => {
+    const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
+    while (myDiagram.undoManager.canUndo()) {
+        myDiagram.undoManager.undo();
+    }
+    myDiagram.zoomToFit();
+    hierarchyChanged.value = false;
+};
 </script>
 
 <template>
@@ -133,16 +176,16 @@ const addValue = (name, parent) => {
         </template>
 
         <div class="py-12">
-            <div class="flex items-center justify-center space-x-2">
-                <input v-model="newNodeName" type="text" placeholder="Nome" class="py-2 px-4 rounded border border-gray-300">
-                <input v-model="newNodeParent" type="text" placeholder="Parent id" class="py-2 px-4 rounded border border-gray-300">
-                <button @click="addValue(newNodeName, newNodeParent)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Adicionar</button>
-            </div>
-    
-            <div class="mt-4">
                 <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
-                    <div id="myDiagramDiv" class="bg-gray-100 border border-gray-200 rounded-md shadow-md fon" style="width: 100%; height: 60%;">
+                <div class="w-full h-3/5" @hierarchyChanged="hierarchyChanged = true">
+                    <div id="myDiagramDiv" class="bg-gray-100 border border-gray-200 rounded-md shadow-md fon" style="width: 100%; height: 100%;">
                     </div>
+                </div>
+
+                <!-- caso exista alguma alteração na hierarquia, exibe botões para salvar ou cancelar a alteração -->
+                <div class="flex justify-end mt-4" v-if="hierarchyChanged">
+                    <Button variant="destructive" class="mr-2" @click="cancelChanges">Cancelar</Button>
+                    <Button @click="saveChanges">Salvar</Button>
                 </div>
             </div>
         </div>
