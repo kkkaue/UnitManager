@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('units', \App\Http\Controllers\UnitController::class);
+    Route::post('/units/update-hierarchy', [\App\Http\Controllers\UnitController::class, 'updateHierarchy'])->name('units.update-hierarchy');
 });
 
 require __DIR__ . '/auth.php';
