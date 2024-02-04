@@ -115,7 +115,6 @@ const addValue = (name, parent) => {
     const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
     const newNode = { key: (myDiagram.model.nodeDataArray.length + 1).toString(), name, parent };
     myDiagram.model.addNodeData(newNode);
-    myDiagram.model.addNodeData(newNode);
     console.log(data.value);
     newNodeName.value = '';
     newNodeParent.value = '';
