@@ -6,6 +6,10 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 
 import { Button } from '@/Components/ui/button'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/Components/ui/card'
+import { Label } from '@/Components/ui/label'
+import { Input } from '@/Components/ui/input'
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/Components/ui/select'
 
 /* define a propriedade units que será recebida do componente pai */
 const props = defineProps({
@@ -16,9 +20,8 @@ const props = defineProps({
 });
 
 /* define as variáveis que serão utilizadas no componente */
-const newNodeName = ref('');
-const newNodeParent = ref('');
 const hierarchyChanged = ref(false);
+const isAddUnitModalOpen = ref(false);
 let initialData = [];
 
 /* define os métodos que serão utilizados no componente */
@@ -112,17 +115,16 @@ const createNode = (text) => {
     return node;
 };
 
-const addValue = (name, parent) => {
-    const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
-    const newNode = { key: (myDiagram.model.nodeDataArray.length + 1).toString(), name, parent };
-    myDiagram.model.addNodeData(newNode);
-    console.log(data.value);
-    newNodeName.value = '';
-    newNodeParent.value = '';
-};
-
 const handleHierarchyChanged = () => {
     hierarchyChanged.value = true;
+};
+
+const openAddUnitModal = () => {
+    isAddUnitModalOpen.value = true;
+};
+
+const closeAddUnitModal = () => {
+    isAddUnitModalOpen.value = false;
 };
 
 const saveChanges = async () => {
@@ -196,7 +198,11 @@ onMounted(() => {
         </template>
 
         <div class="py-12">
+            <!-- botão de adicionar unidades -->
             <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
+                <div class="flex justify-end mb-4">
+                    <Button @click="openAddUnitModal">Adicionar Unidade</Button>
+                </div>
                 <div class="w-full h-3/5" @hierarchyChanged="hierarchyChanged = true">
                     <div id="myDiagramDiv" class="bg-gray-100 border border-gray-200 rounded-md shadow-md fon" style="width: 100%; height: 100%;">
                     </div>
@@ -206,6 +212,71 @@ onMounted(() => {
                 <div class="flex justify-end mt-4" v-if="hierarchyChanged">
                     <Button variant="destructive" class="mr-2" @click="cancelChanges">Cancelar</Button>
                     <Button @click="saveChanges">Salvar</Button>
+                </div>
+                <div v-if="isAddUnitModalOpen" class="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <Card class="w-1/3">
+                        <CardHeader>
+                            <CardTitle>Adicionar Unidade</CardTitle>
+                            <CardDescription>Adicione uma nova unidade no sistema</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form>
+                                <div class="grid items-center w-full gap-4">
+                                    <div class="flex space-x-1.5 items-center">
+                                        <div class="w-full flex flex-col space-y-1.5">
+                                            <Label for="name">Nome da Unidade</Label>
+                                            <Input id="name" placeholder="Digite o nome da unidade" />
+                                        </div>
+                                        <div class="w-full flex flex-col space-y-1.5">
+                                            <Label for="description">Descrição</Label>
+                                            <Input id="description" placeholder="Digite a descrição da unidade" />
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-1.5 items-center">
+                                        <div class="w-full flex flex-col space-y-1.5">
+                                            <Label for="email">E-mail</Label>
+                                            <Input id="email" placeholder="Digite o e-mail da unidade" />
+                                        </div>
+                                        <div class="w-full flex flex-col space-y-1.5">
+                                            <Label for="phone">Telefone</Label>
+                                            <Input id="phone" placeholder="Digite o telefone da unidade" />
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-col space-y-1.5">
+                                        <Label for="framework">Framework</Label>
+                                        <Select>
+                                        <SelectTrigger id="framework">
+                                            <SelectValue placeholder="Select" />
+                                        </SelectTrigger>
+                                        <SelectContent position="popper">
+                                            <SelectItem value="nuxt">
+                                                Nuxt.js
+                                            </SelectItem>
+                                            <SelectItem value="next">
+                                                Next.js
+                                            </SelectItem>
+                                            <SelectItem value="sveltekit">
+                                                SvelteKit
+                                            </SelectItem>
+                                            <SelectItem value="astro">
+                                                Astro
+                                            </SelectItem>
+                                        </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </form>
+                        </CardContent>
+                        <CardFooter class="flex justify-between px-6 pb-6">
+                            <Button variant="outline" @click="closeAddUnitModal">
+                                Cancel
+                            </Button>
+                            <Button @click="mostrarValoresInputConsoleLog">
+                                Save
+                            </Button>
+                        </CardFooter>
+                    </Card>
                 </div>
             </div>
         </div>
