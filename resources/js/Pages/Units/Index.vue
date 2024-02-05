@@ -19,6 +19,7 @@ const props = defineProps({
 const newNodeName = ref('');
 const newNodeParent = ref('');
 const hierarchyChanged = ref(false);
+let initialData = [];
 
 /* define os métodos que serão utilizados no componente */
 const transformUnits = (units) => {
@@ -126,6 +127,7 @@ const handleHierarchyChanged = () => {
 
 const saveChanges = async () => {
     const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
+    myDiagram.startTransaction("save Changes");
     const data = myDiagram.model.nodeDataArray;
     const units = data.map(unit => {
         return {
@@ -140,17 +142,24 @@ const saveChanges = async () => {
     } catch (error) {
         console.error(error);
     }
-
     myDiagram.zoomToFit();
+    myDiagram.commitTransaction("save Changes");
+
+    initialData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
 };
 
 const cancelChanges = () => {
     const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
+    myDiagram.startTransaction("cancel Changes");
     while (myDiagram.undoManager.canUndo()) {
         myDiagram.undoManager.undo();
     }
     myDiagram.zoomToFit();
     hierarchyChanged.value = false;
+
+    // Restaura o estado inicial dos nós
+    myDiagram.model.nodeDataArray = JSON.parse(JSON.stringify(initialData));
+    myDiagram.commitTransaction("cancel Changes");
 };
 
 onMounted(() => {
@@ -169,6 +178,8 @@ onMounted(() => {
             stroke: "#d1d5db", 
         }))
     myDiagram.model = new go.TreeModel(transformedUnits);
+
+    initialData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
 
     myDiagram.zoomToFit();
 });
