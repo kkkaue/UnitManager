@@ -11,6 +11,8 @@ import { Label } from '@/Components/ui/label'
 import { Input } from '@/Components/ui/input'
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/Components/ui/select'
 
+import LMap from '@/Components/LMap.vue';
+
 /* define a propriedade units que será recebida do componente pai */
 const props = defineProps({
     units: {
@@ -22,6 +24,7 @@ const props = defineProps({
 /* define as variáveis que serão utilizadas no componente */
 const hierarchyChanged = ref(false);
 const isAddUnitModalOpen = ref(false);
+const markerPosition = ref({ lat: 0, lng: 0 });
 let initialData = [];
 
 /* define os métodos que serão utilizados no componente */
@@ -127,6 +130,11 @@ const closeAddUnitModal = () => {
     isAddUnitModalOpen.value = false;
 };
 
+const mostrarValoresInputConsoleLog = () => {
+    console.log(document.getElementById('latitude').value);
+    console.log(document.getElementById('longitude').value);
+};
+
 const saveChanges = async () => {
     const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
     myDiagram.startTransaction("save Changes");
@@ -185,8 +193,6 @@ onMounted(() => {
 
     myDiagram.zoomToFit();
 });
-
-
 </script>
 
 <template>
@@ -213,6 +219,7 @@ onMounted(() => {
                     <Button variant="destructive" class="mr-2" @click="cancelChanges">Cancelar</Button>
                     <Button @click="saveChanges">Salvar</Button>
                 </div>
+
                 <div v-if="isAddUnitModalOpen" class="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                     <Card class="w-1/3">
                         <CardHeader>
@@ -243,6 +250,13 @@ onMounted(() => {
                                         </div>
                                     </div>
 
+                                    <div class="flex flex-col space-y-1.5">
+                                        <Label for="address">Selecione a localização da unidade</Label>
+                                        <LMap v-model="markerPosition" />
+                                        <input type="hidden" id="latitude" v-model="markerPosition.lat" />
+                                        <input type="hidden" id="longitude" v-model="markerPosition.lng" />
+                                    </div>
+                                    
                                     <div class="flex flex-col space-y-1.5">
                                         <Label for="framework">Framework</Label>
                                         <Select>
