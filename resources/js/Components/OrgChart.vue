@@ -4,6 +4,7 @@ import { Button } from '@/Components/ui/button';
 
 import unitService from '@/services/unitService';
 
+// Definindo as propriedades que serão recebidas do componente pai
 const props = defineProps({
   data: {
     type: Object,
@@ -11,9 +12,11 @@ const props = defineProps({
   }
 });
 
+// Definindo as referências para o estado da hierarquia e os dados iniciais
 let hierarchyChanged = ref(false);
 let initialData = [];
 
+// Função para criar um nó no diagrama
 const createNode = (text) => {
   const node = new go.Node("Auto", {
     background: "#ffffff",
@@ -54,7 +57,6 @@ const createNode = (text) => {
   };
 
   // Adiciona o efeito de arrastar e soltar
-
   node.mouseDragEnter = function(e, obj) {
     obj.part.findObject("RoundedRectangle").fill = "#f3f4f6";
     obj.part.findObject("RoundedRectangle").stroke = "#2563eb";
@@ -81,10 +83,12 @@ const createNode = (text) => {
   return node;
 };
 
+// Função para lidar com a alteração na hierarquia
 const handleHierarchyChanged = () => {
   hierarchyChanged.value = true;
 };
 
+// Função para cancelar as alterações
 const cancelChanges = () => {
   const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
   myDiagram.startTransaction("cancel Changes");
@@ -99,6 +103,7 @@ const cancelChanges = () => {
   myDiagram.commitTransaction("cancel Changes");
 };
 
+// Função para salvar as alterações
 const saveChanges = async () => {
   const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
   myDiagram.startTransaction("save Changes");
@@ -122,6 +127,7 @@ const saveChanges = async () => {
   initialData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
 };
 
+// Função executada quando o componente é montado
 onMounted(() => {
   const myDiagram = new go.Diagram('myDiagramDiv', {
     "undoManager.isEnabled": true,
@@ -152,6 +158,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <!-- Exibe o diagrama -->
   <div class="w-full h-3/5" @hierarchyChanged="hierarchyChanged = true">
     <div id="myDiagramDiv" class="bg-gray-100 border border-gray-200 rounded-md shadow-md fon" style="width: 100%; height: 100%;">
     </div>

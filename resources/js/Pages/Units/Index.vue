@@ -1,21 +1,19 @@
 <script setup>
+// Importando componentes e funções necessárias
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { defineProps, ref, onMounted } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
-
 import { transformUnits } from '../../unitUtils.js';
-
 import { Button } from '@/Components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/Components/ui/card'
 import { Label } from '@/Components/ui/label'
 import { Input } from '@/Components/ui/input'
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/Components/ui/select'
-
 import OrgChart from '@/Components/OrgChart.vue';
 import LMap from '@/Components/LMap.vue';
 import { watch } from 'vue';
 
-/* define a propriedade units que será recebida do componente pai */
+// Definindo as propriedades que serão recebidas do componente pai
 const props = defineProps({
     unitsWithChildren: {
         type: Array,
@@ -27,6 +25,7 @@ const props = defineProps({
     },
 });
 
+// Inicializando o formulário com valores nulos
 const form = useForm({
     name: null,
     description: null,
@@ -37,19 +36,22 @@ const form = useForm({
     parent_id: null,
 });
 
-/* define as variáveis que serão utilizadas no componente */
+// Tratando os dados das unidades
 let transformedData = transformUnits(props.unitsWithChildren);
+
+// Definindo a referência para o estado do modal e a posição do marcador
 const isAddUnitModalOpen = ref(false);
 const markerPosition = ref({ lat: 0, lng: 0 });
 
+// Funções para abrir e fechar o modal
 const openAddUnitModal = () => {
     isAddUnitModalOpen.value = true;
 };
-
 const closeAddUnitModal = () => {
     isAddUnitModalOpen.value = false;
 };
 
+// Função para enviar o formulário
 const submit = () => {
     form.post(route('units.store'), {
         onFinish: () => {
@@ -59,6 +61,7 @@ const submit = () => {
     });
 };
 
+// Observando a posição do marcador e atualizando os valores de latitude e longitude do formulário
 onMounted(() => {
     watch(markerPosition, (newValue) => {
         form.latitude = newValue.lat;
@@ -68,31 +71,42 @@ onMounted(() => {
 </script>
 
 <template>
+    <!-- Definindo o título da página -->
     <Head title="Unidades" />
 
+    <!-- Layout autenticado -->
     <AuthenticatedLayout>
+        <!-- Cabeçalho da página -->
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Unidades</h2>
         </template>
 
+        <!-- Conteúdo da página -->
         <div class="py-12">
-            <!-- botão de adicionar unidades -->
+            <!-- Botão para adicionar unidades -->
             <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
                 <div class="flex justify-end mb-4">
                     <Button @click="openAddUnitModal">Adicionar Unidade</Button>
                 </div>
                 
+                <!-- Organograma das unidades -->
                 <OrgChart :data="transformedData" />
 
+                <!-- Modal para adicionar unidade -->
                 <div v-if="isAddUnitModalOpen" class="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                     <Card class="w-1/3">
+                        <!-- Cabeçalho do modal -->
                         <CardHeader>
                             <CardTitle>Adicionar Unidade</CardTitle>
                             <CardDescription>Adicione uma nova unidade no sistema</CardDescription>
                         </CardHeader>
+                        <!-- Conteúdo do modal -->
                         <CardContent>
+                            <!-- Formulário para adicionar unidade -->
                             <form @submit.prevent="submit">
+                                <!-- Campos do formulário -->
                                 <div class="grid items-center w-full gap-4">
+                                    <!-- Campos de nome e descrição -->
                                     <div class="flex space-x-1.5 items-center">
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="name">Nome da Unidade</Label>
@@ -103,6 +117,7 @@ onMounted(() => {
                                             <Input id="description" v-model="form.description" placeholder="Digite a descrição da unidade" autocomplete="off" />
                                         </div>
                                     </div>
+                                    <!-- Campos de e-mail e telefone -->
                                     <div class="flex space-x-1.5 items-center">
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="email">E-mail</Label>
@@ -114,6 +129,7 @@ onMounted(() => {
                                         </div>
                                     </div>
 
+                                    <!-- Campo de localização -->
                                     <div class="flex flex-col space-y-1.5">
                                         <Label>
                                             Selecione a localização da unidade
@@ -123,6 +139,7 @@ onMounted(() => {
                                         <input type="hidden" id="longitude" v-model="form.longitude" />
                                     </div>
                                     
+                                    <!-- Campo de unidade pai -->
                                     <div class="flex flex-col space-y-1.5">
                                         <Label for="unit">
                                             Selecione a unidade pai
@@ -143,6 +160,7 @@ onMounted(() => {
                                 </div>
                             </form>
                         </CardContent>
+                        <!-- Rodapé do modal -->
                         <CardFooter class="flex justify-between px-6 pb-6">
                             <Button variant="outline" @click="closeAddUnitModal">
                                 Cancel
