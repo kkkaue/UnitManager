@@ -53,10 +53,9 @@ const closeUnitModal = () => {
 // Função para enviar o formulário
 const submitUnitForm = () => {
     unitForm.post(route('units.store'), {
-        onFinish: () => {
+        onSuccess: () => {
             unitForm.reset();
             closeUnitModal();
-
             // Recarregando a página para atualizar a hierarquia
             window.location.reload();
         },
@@ -111,43 +110,66 @@ onMounted(() => {
                                     <!-- Campos de nome e descrição -->
                                     <div class="flex space-x-1.5 items-center">
                                         <div class="w-full flex flex-col space-y-1.5">
-                                            <Label for="name">Nome da Unidade</Label>
-                                            <Input id="name" v-model="unitForm.name" placeholder="Digite o nome da unidade" autocomplete="off" />
+                                            <Label for="name" :class="{ 'text-red-600': unitForm.errors.name }">
+                                                Nome da Unidade
+                                            </Label>
+                                            <Input id="name" v-model="unitForm.name" :class="{ 'border-red-600': unitForm.errors.name }" placeholder="Digite o nome da unidade" autocomplete="off" />
+                                            <div class="text-red-600 text-sm" v-if="unitForm.errors.name">
+                                                {{ unitForm.errors.name }}
+                                            </div>
                                         </div>
                                         <div class="w-full flex flex-col space-y-1.5">
-                                            <Label for="description">Descrição</Label>
-                                            <Input id="description" v-model="unitForm.description" placeholder="Digite a descrição da unidade" autocomplete="off" />
+                                            <Label for="description" :class="{ 'text-red-600': unitForm.errors.description }">
+                                                Descrição
+                                            </Label>
+                                            <Input id="description" v-model="unitForm.description" :class="{ 'border-red-600': unitForm.errors.description }" placeholder="Digite a descrição da unidade" autocomplete="off"/>
+                                            <div class="text-red-600 text-sm" v-if="unitForm.errors.description">
+                                                {{ unitForm.errors.description }}
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- Campos de e-mail e telefone -->
                                     <div class="flex space-x-1.5 items-center">
                                         <div class="w-full flex flex-col space-y-1.5">
-                                            <Label for="email">E-mail</Label>
-                                            <Input id="email" v-model="unitForm.email" placeholder="Digite o e-mail da unidade" autocomplete="off" />
+                                            <Label for="email" :class="{ 'text-red-600': unitForm.errors.email }">
+                                                E-mail
+                                            </Label>
+                                            <Input id="email" v-model="unitForm.email" :class="{ 'border-red-600': unitForm.errors.email }" placeholder="Digite o e-mail da unidade" autocomplete="off" />
+                                            <div class="text-red-600 text-sm" v-if="unitForm.errors.email">
+                                                {{ unitForm.errors.email }}
+                                            </div>
                                         </div>
                                         <div class="w-full flex flex-col space-y-1.5">
-                                            <Label for="phone">Telefone</Label>
-                                            <Input id="phone" v-model="unitForm.phone" placeholder="Digite o telefone da unidade" autocomplete="off" />
+                                            <Label for="phone" :class="{ 'text-red-600': unitForm.errors.phone }">
+                                                Telefone
+                                            </Label>
+                                            <Input id="phone" v-model="unitForm.phone" :class="{ 'border-red-600': unitForm.errors.phone }" placeholder="Digite o telefone da unidade" autocomplete="off" />
+                                            <div class="text-red-600 text-sm" v-if="unitForm.errors.phone">
+                                                {{ unitForm.errors.phone }}
+                                            </div>
                                         </div>
                                     </div>
 
                                     <!-- Campo de localização -->
                                     <div class="flex flex-col space-y-1.5">
-                                        <Label>
+                                        <Label :class="{ 'text-red-600': unitForm.errors.latitude || unitForm.errors.longitude }">
                                             Selecione a localização da unidade
                                         </Label>
                                         <LMap v-model="markerPosition" />
+                                        <div class="text-red-600 text-sm" v-if="unitForm.errors.latitude || unitForm.errors.longitude">
+                                            {{ unitForm.errors.latitude || unitForm.errors.longitude }}
+                                        </div>
                                         <input type="hidden" id="latitude" v-model="unitForm.latitude" />
                                         <input type="hidden" id="longitude" v-model="unitForm.longitude" />
                                     </div>
                                     
                                     <!-- Campo de unidade pai -->
                                     <div class="flex flex-col space-y-1.5">
-                                        <Label for="unit">
+                                        <Label for="parent_id" :class="{ 'text-red-600': unitForm.errors.parent_id }">
                                             Selecione a unidade pai
                                         </Label>
-                                        <Select v-model="unitForm.parent_id">
-                                            <SelectTrigger>
+                                        <Select v-model="unitForm.parent_id" id="parent_id">
+                                            <SelectTrigger :class="{ 'border-red-600': unitForm.errors.parent_id }">
                                                 <SelectValue>
                                                     {{ unitForm.parent_id ? units.find(unit => unit.id.toString() === unitForm.parent_id).name : 'Selecione a unidade pai' }}
                                                 </SelectValue>
@@ -158,17 +180,20 @@ onMounted(() => {
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        <div class="text-red-600 text-sm" v-if="unitForm.errors.parent_id">
+                                            {{ unitForm.errors.parent_id }}
+                                        </div>
                                     </div>
                                 </div>
                             </form>
                         </CardContent>
                         <!-- Rodapé do modal -->
                         <CardFooter class="flex justify-between px-6 pb-6">
-                            <Button variant="outline" @click="closeUnitModal">
-                                Cancel
+                            <Button variant="destructive" @click="closeUnitModal">
+                                Cancelar
                             </Button>
                             <Button type="submit" :disabled="unitForm.processing" @click="submitUnitForm">
-                                Save
+                                Adicionar
                             </Button>
                         </CardFooter>
                     </Card>
