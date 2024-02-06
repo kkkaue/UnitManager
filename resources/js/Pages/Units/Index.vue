@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { defineProps, ref, onMounted } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 
 import axios from 'axios';
 
@@ -12,6 +12,7 @@ import { Input } from '@/Components/ui/input'
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/Components/ui/select'
 
 import LMap from '@/Components/LMap.vue';
+import { watch } from 'vue';
 
 /* define a propriedade units que será recebida do componente pai */
 const props = defineProps({
@@ -23,6 +24,16 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+});
+
+const form = useForm({
+    name: null,
+    description: null,
+    email: null,
+    phone: null,
+    latitude: null,
+    longitude: null,
+    parent_id: null,
 });
 
 /* define as variáveis que serão utilizadas no componente */
@@ -176,8 +187,16 @@ const cancelChanges = () => {
     myDiagram.commitTransaction("cancel Changes");
 };
 
+const submit = () => {
+    form.post(route('units.store'), {
+        onFinish: () => {
+            form.reset();
+            closeAddUnitModal();
+        },
+    });
+};
+
 onMounted(() => {
-    console.log(props.units);
     const transformedUnits = transformUnits(props.unitsWithChildren);
     const myDiagram = new go.Diagram("myDiagramDiv", {
         "undoManager.isEnabled": true,
@@ -197,6 +216,11 @@ onMounted(() => {
     initialData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
 
     myDiagram.zoomToFit();
+
+    watch(markerPosition, (newValue) => {
+        form.latitude = newValue.lat;
+        form.longitude = newValue.lng;
+    });
 });
 </script>
 
@@ -232,51 +256,53 @@ onMounted(() => {
                             <CardDescription>Adicione uma nova unidade no sistema</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form>
+                            <form @submit.prevent="submit">
                                 <div class="grid items-center w-full gap-4">
                                     <div class="flex space-x-1.5 items-center">
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="name">Nome da Unidade</Label>
-                                            <Input id="name" placeholder="Digite o nome da unidade" autocomplete="off" />
+                                            <Input id="name" v-model="form.name" placeholder="Digite o nome da unidade" autocomplete="off" />
                                         </div>
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="description">Descrição</Label>
-                                            <Input id="description" placeholder="Digite a descrição da unidade" autocomplete="off" />
+                                            <Input id="description" v-model="form.description" placeholder="Digite a descrição da unidade" autocomplete="off" />
                                         </div>
                                     </div>
                                     <div class="flex space-x-1.5 items-center">
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="email">E-mail</Label>
-                                            <Input id="email" placeholder="Digite o e-mail da unidade" autocomplete="off" />
+                                            <Input id="email" v-model="form.email" placeholder="Digite o e-mail da unidade" autocomplete="off" />
                                         </div>
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="phone">Telefone</Label>
-                                            <Input id="phone" placeholder="Digite o telefone da unidade" autocomplete="off" />
+                                            <Input id="phone" v-model="form.phone" placeholder="Digite o telefone da unidade" autocomplete="off" />
                                         </div>
                                     </div>
 
                                     <div class="flex flex-col space-y-1.5">
-                                        <Label for="location">
+                                        <Label>
                                             Selecione a localização da unidade
                                         </Label>
                                         <LMap v-model="markerPosition" />
-                                        <input type="hidden" id="latitude" v-model="markerPosition.lat" />
-                                        <input type="hidden" id="longitude" v-model="markerPosition.lng" />
+                                        <input type="hidden" id="latitude" v-model="form.latitude" />
+                                        <input type="hidden" id="longitude" v-model="form.longitude" />
                                     </div>
                                     
                                     <div class="flex flex-col space-y-1.5">
                                         <Label for="unit">
                                             Selecione a unidade pai
                                         </Label>
-                                        <Select>
-                                        <SelectTrigger id="unit">
-                                            <SelectValue placeholder="Selecione uma unidade" />
-                                        </SelectTrigger>
-                                        <SelectContent position="popper">
-                                            <SelectItem v-for="unit in units" :key="unit.id" :value="unit.id">
-                                                {{ unit.name }}
-                                            </SelectItem>
-                                        </SelectContent>
+                                        <Select v-model="form.parent_id">
+                                            <SelectTrigger>
+                                                <SelectValue>
+                                                    {{ form.parent_id ? units[form.parent_id].name : 'Selecione a unidade pai' }}
+                                                </SelectValue>
+                                            </SelectTrigger>
+                                            <SelectContent position="popper">
+                                                <SelectItem v-for="unit in units" :key="unit.id" :value="unit.id.toString()">
+                                                    {{ unit.name }}
+                                                </SelectItem>
+                                            </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
@@ -286,7 +312,7 @@ onMounted(() => {
                             <Button variant="outline" @click="closeAddUnitModal">
                                 Cancel
                             </Button>
-                            <Button @click="mostrarValoresInputConsoleLog">
+                            <Button type="submit" :disabled="form.processing" @click="submit">
                                 Save
                             </Button>
                         </CardFooter>
