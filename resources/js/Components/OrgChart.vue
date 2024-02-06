@@ -1,7 +1,8 @@
 <script setup>
 import { defineProps, ref, onMounted } from 'vue';
 import { Button } from '@/Components/ui/button';
-import axios from 'axios';
+
+import unitService from '@/services/unitService';
 
 const props = defineProps({
   data: {
@@ -110,7 +111,7 @@ const saveChanges = async () => {
   });
 
   try {
-    await axios.post('/units/update-hierarchy', { units });
+    await unitService.updateHierarchy(units);
     hierarchyChanged.value = false;
   } catch (error) {
     console.error(error);
