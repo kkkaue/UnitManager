@@ -120,11 +120,11 @@ const saveHierarchyChanges = async () => {
     hierarchyChanged.value = false;
   } catch (error) {
     console.error(error);
+  } finally {
+    myDiagram.zoomToFit();
+    myDiagram.commitTransaction("save Changes");
+    initialHierarchyData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
   }
-  myDiagram.zoomToFit();
-  myDiagram.commitTransaction("save Changes");
-
-  initialHierarchyData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
 };
 
 // Função executada quando o componente é montado
@@ -160,7 +160,7 @@ onMounted(() => {
 <template>
   <!-- Exibe o diagrama -->
   <div class="w-full h-3/5" @hierarchyChanged="hierarchyChanged = true">
-    <div id="myDiagramDiv" class="bg-gray-100 border border-gray-200 rounded-md shadow-md fon" style="width: 100%; height: 100%;">
+    <div id="myDiagramDiv" class="w-full h-full bg-gray-100 border border-gray-200 rounded-md shadow-md">
     </div>
   </div>
 
