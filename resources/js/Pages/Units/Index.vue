@@ -1,7 +1,7 @@
 <script setup>
 // Importando componentes e funções necessárias
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, onMounted, watch } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { transformUnits } from '../../unitUtils.js';
 import { Button } from '@/Components/ui/button'
@@ -11,7 +11,6 @@ import { Input } from '@/Components/ui/input'
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/Components/ui/select'
 import OrgChart from '@/Components/OrgChart.vue';
 import LMap from '@/Components/LMap.vue';
-import { watch } from 'vue';
 
 // Definindo as propriedades que serão recebidas do componente pai
 const unitProps = defineProps({
@@ -57,6 +56,9 @@ const submitUnitForm = () => {
         onFinish: () => {
             unitForm.reset();
             closeUnitModal();
+
+            // Recarregando a página para atualizar a hierarquia
+            window.location.reload();
         },
     });
 };
