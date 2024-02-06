@@ -295,7 +295,7 @@ onMounted(() => {
                                         <Select v-model="form.parent_id">
                                             <SelectTrigger>
                                                 <SelectValue>
-                                                    {{ form.parent_id ? units[form.parent_id].name : 'Selecione a unidade pai' }}
+                                                    {{ form.parent_id ? units.find(unit => unit.id.toString() === form.parent_id).name : 'Selecione a unidade pai' }}
                                                 </SelectValue>
                                             </SelectTrigger>
                                             <SelectContent position="popper">
