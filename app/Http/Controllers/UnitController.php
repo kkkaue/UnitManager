@@ -44,12 +44,27 @@ class UnitController extends Controller
             'longitude'   => ['required', 'numeric'],
             'parent_id'   => 'nullable|exists:units,id',
         ];
-
         if (Unit::exists()) {
             $rules['parent_id'] = 'required|exists:units,id';
         }
 
-        $request->validate($rules);
+        $messages = [
+            'name.required'        => 'O campo nome é obrigatório.',
+            'name.max'             => 'O campo nome deve ter no máximo 255 caracteres.',
+            'description.required' => 'O campo descrição é obrigatório.',
+            'email.required'       => 'O campo e-mail é obrigatório.',
+            'email.email'          => 'O e-mail informado é inválido.',
+            'email.max'            => 'O campo e-mail deve ter no máximo 255 caracteres.',
+            'email.unique'         => 'Este e-mail já está em uso.',
+            'phone.required'       => 'O campo telefone é obrigatório.',
+            'phone.max'            => 'O campo telefone deve ter no máximo 255 caracteres.',
+            'latitude.required'    => 'Você deve informar a a localização da unidade.',
+            'longitude.required'   => 'Você deve informar a a localização da unidade.',
+            'parent_id.required'   => 'Você deve informar a unidade pai.',
+            'parent_id.exists'     => 'A unidade pai informada não existe.',
+        ];
+
+        $request->validate($rules, $messages);
 
         $data = [
             'name'        => $request->name,
