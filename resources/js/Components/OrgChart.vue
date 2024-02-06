@@ -124,6 +124,9 @@ const saveHierarchyChanges = async () => {
     myDiagram.zoomToFit();
     myDiagram.commitTransaction("save Changes");
     initialHierarchyData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
+
+    // Atualiza os dados no componente pai
+    orgChartProps.data = myDiagram.model.nodeDataArray;
   }
 };
 
