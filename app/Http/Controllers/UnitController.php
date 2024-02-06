@@ -13,10 +13,12 @@ class UnitController extends Controller
      */
     public function index()
     {
-        $units = Unit::with('allChildren')->whereNull('parent_id')->get();
+        $unitsWithChildren = Unit::with('allChildren')->whereNull('parent_id')->get();
+        $units             = Unit::all();
         
         return Inertia::render('Units/Index', [
-            'units' => $units,
+            'units'             => $units,
+            'unitsWithChildren' => $unitsWithChildren,
         ]);
     }
 
@@ -33,24 +35,53 @@ class UnitController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $rules = [
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'email'       => ['required', 'email', 'max:255', 'unique:units'],
             'phone'       => ['required', 'string', 'max:255'],
             'latitude'    => ['required', 'numeric'],
             'longitude'   => ['required', 'numeric'],
-        ]);
-        Unit::create([
+            'parent_id'   => 'nullable|exists:units,id',
+        ];
+        if (Unit::exists()) {
+            $rules['parent_id'] = 'required|exists:units,id';
+        }
+
+        $messages = [
+            'name.required'        => 'O campo nome é obrigatório.',
+            'name.max'             => 'O campo nome deve ter no máximo 255 caracteres.',
+            'description.required' => 'O campo descrição é obrigatório.',
+            'email.required'       => 'O campo e-mail é obrigatório.',
+            'email.email'          => 'O e-mail informado é inválido.',
+            'email.max'            => 'O campo e-mail deve ter no máximo 255 caracteres.',
+            'email.unique'         => 'Este e-mail já está em uso.',
+            'phone.required'       => 'O campo telefone é obrigatório.',
+            'phone.max'            => 'O campo telefone deve ter no máximo 255 caracteres.',
+            'latitude.required'    => 'Você deve informar a a localização da unidade.',
+            'longitude.required'   => 'Você deve informar a a localização da unidade.',
+            'parent_id.required'   => 'Você deve informar a unidade pai.',
+            'parent_id.exists'     => 'A unidade pai informada não existe.',
+        ];
+
+        $request->validate($rules, $messages);
+
+        $data = [
             'name'        => $request->name,
             'description' => $request->description,
             'email'       => $request->email,
             'phone'       => $request->phone,
             'latitude'    => $request->latitude,
             'longitude'   => $request->longitude,
-        ]);
+        ];
 
-        return redirect()->route('dashboard')->with('success', 'Unidade criada com sucesso.');
+        if ($request->has('parent_id')) {
+            $data['parent_id'] = $request->parent_id;
+        }
+
+        Unit::create($data);
+
+        return redirect()->back()->with('success', 'Unidade criada com sucesso.');
     }
 
     /**
@@ -85,7 +116,7 @@ class UnitController extends Controller
         $unit = Unit::findOrFail($id);
         $unit->update($request->all());
 
-        return redirect()->route('dashboard')->with('success', 'Unidade atualizada com sucesso.');
+        return redirect()->back()->with('success', 'Unidade atualizada com sucesso.');
     }
 
     public function updateHierarchy(Request $request)
@@ -110,6 +141,6 @@ class UnitController extends Controller
         $unit = Unit::findOrFail($id);
         $unit->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Unidade excluída com sucesso.');
+        return redirect()->back()->with('success', 'Unidade removida com sucesso.');
     }
 }

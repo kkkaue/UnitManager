@@ -27,6 +27,44 @@ it('should be able to create a unit', function () {
     expect((float)$unit->longitude)->toBe(-46.6333094);
 });
 
+it('should be able to create a unit even after there are already created units', function () {
+    $user = User::factory()->create();
+    $unit = Unit::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => 'Unit Test',
+        'description' => 'Description of Unit Test',
+        'email'       => 'unit@test.com',
+        'phone'       => '123456789',
+        'latitude'    => -23.5505199,
+        'longitude'   => -46.6333094,
+        'parent_id'   => $unit->id,
+    ]);
+    expect($response)
+        ->assertRedirect(route('dashboard'))
+        ->assertSessionHas('success', 'Unidade criada com sucesso.');
+});
+
+it('should be mandatory to pass the ID of the parent unit if there are already units', function () {
+    $user = User::factory()->create();
+    Unit::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => 'Unit Test',
+        'description' => 'Description of Unit Test',
+        'email'       => 'unit@test.com',
+        'phone'       => '123456789',
+        'latitude'    => -23.5505199,
+        'longitude'   => -46.6333094,
+        // 'parent_id' não é fornecido
+    ]);
+
+    expect($response)->assertSessionHasErrors('parent_id');
+
+    $unit = Unit::where('name', 'Unit Test')->first();
+    expect($unit)->toBeNull();
+});
+
 it('should redirect unauthenticated user to login page', function () {
     $response = $this->post(route('units.store'), [
         'name'        => 'Unit Test',
@@ -51,7 +89,7 @@ it('should return error when unit name is not provided', function () {
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['name' => 'The name field is required.']);
+    expect($response)->assertSessionHasErrors(['name' => 'O campo nome é obrigatório.']);
 });
 
 it('should return error when unit description is not provided', function () {
@@ -65,7 +103,7 @@ it('should return error when unit description is not provided', function () {
         'longitude' => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['description' => 'The description field is required.']);
+    expect($response)->assertSessionHasErrors(['description' => 'O campo descrição é obrigatório.']);
 });
 
 it('should return error when unit email is not provided', function () {
@@ -79,7 +117,7 @@ it('should return error when unit email is not provided', function () {
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['email' => 'The email field is required.']);
+    expect($response)->assertSessionHasErrors(['email' => 'O campo e-mail é obrigatório.']);
 });
 
 it('should return error when unit phone is not provided', function () {
@@ -93,7 +131,7 @@ it('should return error when unit phone is not provided', function () {
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['phone' => 'The phone field is required.']);
+    expect($response)->assertSessionHasErrors(['phone' => 'O campo telefone é obrigatório.']);
 });
 
 it('should return error when unit latitude is not provided', function () {
@@ -107,7 +145,7 @@ it('should return error when unit latitude is not provided', function () {
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['latitude' => 'The latitude field is required.']);
+    expect($response)->assertSessionHasErrors(['latitude' => 'Você deve informar a a localização da unidade.']);
 });
 
 it('should return error when unit longitude is not provided', function () {
@@ -121,7 +159,7 @@ it('should return error when unit longitude is not provided', function () {
         'latitude'    => -23.5505199,
     ]);
 
-    expect($response)->assertSessionHasErrors(['longitude' => 'The longitude field is required.']);
+    expect($response)->assertSessionHasErrors(['longitude' => 'Você deve informar a a localização da unidade.']);
 });
 
 it('should return error when email format is invalid', function () {
@@ -136,7 +174,7 @@ it('should return error when email format is invalid', function () {
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['email' => 'The email field must be a valid email address.']);
+    expect($response)->assertSessionHasErrors(['email' => 'O e-mail informado é inválido.']);
 });
 
 it('should return error when latitude format is invalid', function () {
@@ -181,7 +219,7 @@ it('should return error when unit name is longer than 255 characters', function 
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['name' => 'The name field must not be greater than 255 characters.']);
+    expect($response)->assertSessionHasErrors(['name' => 'O campo nome deve ter no máximo 255 caracteres.']);
 
     $unit = Unit::where('name', str_repeat('a', 256))->first();
     expect($unit)->toBeNull();
@@ -199,7 +237,7 @@ it('should return error when unit email is longer than 255 characters', function
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['email' => 'The email field must not be greater than 255 characters.']);
+    expect($response)->assertSessionHasErrors(['email' => 'O campo e-mail deve ter no máximo 255 caracteres.']);
 
     $unit = Unit::where('email', str_repeat('a', 256))->first();
     expect($unit)->toBeNull();
@@ -217,7 +255,7 @@ it('should return error when unit phone is longer than 255 characters', function
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['phone' => 'The phone field must not be greater than 255 characters.']);
+    expect($response)->assertSessionHasErrors(['phone' => 'O campo telefone deve ter no máximo 255 caracteres.']);
 
     $unit = Unit::where('phone', str_repeat('a', 256))->first();
     expect($unit)->toBeNull();
@@ -236,5 +274,5 @@ it('should return error when unit email is not unique', function () {
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['email' => 'The email has already been taken.']);
+    expect($response)->assertSessionHasErrors(['email' => 'Este e-mail já está em uso.']);
 });
