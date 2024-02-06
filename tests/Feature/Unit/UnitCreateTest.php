@@ -27,6 +27,44 @@ it('should be able to create a unit', function () {
     expect((float)$unit->longitude)->toBe(-46.6333094);
 });
 
+it('should be able to create a unit even after there are already created units', function () {
+    $user = User::factory()->create();
+    $unit = Unit::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => 'Unit Test',
+        'description' => 'Description of Unit Test',
+        'email'       => 'unit@test.com',
+        'phone'       => '123456789',
+        'latitude'    => -23.5505199,
+        'longitude'   => -46.6333094,
+        'parent_id'   => $unit->id,
+    ]);
+    expect($response)
+        ->assertRedirect(route('dashboard'))
+        ->assertSessionHas('success', 'Unidade criada com sucesso.');
+});
+
+it('should be mandatory to pass the ID of the parent unit if there are already units', function () {
+    $user = User::factory()->create();
+    Unit::factory()->create();
+
+    $response = $this->actingAs($user)->post(route('units.store'), [
+        'name'        => 'Unit Test',
+        'description' => 'Description of Unit Test',
+        'email'       => 'unit@test.com',
+        'phone'       => '123456789',
+        'latitude'    => -23.5505199,
+        'longitude'   => -46.6333094,
+        // 'parent_id' não é fornecido
+    ]);
+
+    expect($response)->assertSessionHasErrors('parent_id');
+
+    $unit = Unit::where('name', 'Unit Test')->first();
+    expect($unit)->toBeNull();
+});
+
 it('should redirect unauthenticated user to login page', function () {
     $response = $this->post(route('units.store'), [
         'name'        => 'Unit Test',
