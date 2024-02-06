@@ -66,7 +66,7 @@ class UnitController extends Controller
 
         Unit::create($data);
 
-        return redirect()->route('dashboard')->with('success', 'Unidade criada com sucesso.');
+        return redirect()->back()->with('success', 'Unidade criada com sucesso.');
     }
 
     /**
@@ -101,7 +101,7 @@ class UnitController extends Controller
         $unit = Unit::findOrFail($id);
         $unit->update($request->all());
 
-        return redirect()->route('dashboard')->with('success', 'Unidade atualizada com sucesso.');
+        return redirect()->back()->with('success', 'Unidade atualizada com sucesso.');
     }
 
     public function updateHierarchy(Request $request)
@@ -126,6 +126,6 @@ class UnitController extends Controller
         $unit = Unit::findOrFail($id);
         $unit->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Unidade excluída com sucesso.');
+        return redirect()->back()->with('success', 'Unidade removida com sucesso.');
     }
 }
