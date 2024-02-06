@@ -33,22 +33,36 @@ class UnitController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $rules = [
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'email'       => ['required', 'email', 'max:255', 'unique:units'],
             'phone'       => ['required', 'string', 'max:255'],
             'latitude'    => ['required', 'numeric'],
             'longitude'   => ['required', 'numeric'],
-        ]);
-        Unit::create([
+            'parent_id'   => 'nullable|exists:units,id',
+        ];
+
+        if (Unit::exists()) {
+            $rules['parent_id'] = 'required|exists:units,id';
+        }
+
+        $request->validate($rules);
+
+        $data = [
             'name'        => $request->name,
             'description' => $request->description,
             'email'       => $request->email,
             'phone'       => $request->phone,
             'latitude'    => $request->latitude,
             'longitude'   => $request->longitude,
-        ]);
+        ];
+
+        if ($request->has('parent_id')) {
+            $data['parent_id'] = $request->parent_id;
+        }
+
+        Unit::create($data);
 
         return redirect()->route('dashboard')->with('success', 'Unidade criada com sucesso.');
     }
