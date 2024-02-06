@@ -13,10 +13,12 @@ class UnitController extends Controller
      */
     public function index()
     {
-        $units = Unit::with('allChildren')->whereNull('parent_id')->get();
+        $unitsWithChildren = Unit::with('allChildren')->whereNull('parent_id')->get();
+        $units = Unit::all();
         
         return Inertia::render('Units/Index', [
             'units' => $units,
+            'unitsWithChildren' => $unitsWithChildren,
         ]);
     }
 

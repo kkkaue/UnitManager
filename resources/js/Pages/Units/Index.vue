@@ -15,8 +15,12 @@ import LMap from '@/Components/LMap.vue';
 
 /* define a propriedade units que será recebida do componente pai */
 const props = defineProps({
-    units: {
+    unitsWithChildren: {
         type: Array,
+        required: true,
+    },
+    units: {
+        type: Object,
         required: true,
     },
 });
@@ -173,7 +177,8 @@ const cancelChanges = () => {
 };
 
 onMounted(() => {
-    const transformedUnits = transformUnits(props.units);
+    console.log(props.units);
+    const transformedUnits = transformUnits(props.unitsWithChildren);
     const myDiagram = new go.Diagram("myDiagramDiv", {
         "undoManager.isEnabled": true,
         layout: new go.TreeLayout({ angle: 90, layerSpacing: 35 })
@@ -232,49 +237,44 @@ onMounted(() => {
                                     <div class="flex space-x-1.5 items-center">
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="name">Nome da Unidade</Label>
-                                            <Input id="name" placeholder="Digite o nome da unidade" />
+                                            <Input id="name" placeholder="Digite o nome da unidade" autocomplete="off" />
                                         </div>
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="description">Descrição</Label>
-                                            <Input id="description" placeholder="Digite a descrição da unidade" />
+                                            <Input id="description" placeholder="Digite a descrição da unidade" autocomplete="off" />
                                         </div>
                                     </div>
                                     <div class="flex space-x-1.5 items-center">
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="email">E-mail</Label>
-                                            <Input id="email" placeholder="Digite o e-mail da unidade" />
+                                            <Input id="email" placeholder="Digite o e-mail da unidade" autocomplete="off" />
                                         </div>
                                         <div class="w-full flex flex-col space-y-1.5">
                                             <Label for="phone">Telefone</Label>
-                                            <Input id="phone" placeholder="Digite o telefone da unidade" />
+                                            <Input id="phone" placeholder="Digite o telefone da unidade" autocomplete="off" />
                                         </div>
                                     </div>
 
                                     <div class="flex flex-col space-y-1.5">
-                                        <Label for="address">Selecione a localização da unidade</Label>
+                                        <Label for="location">
+                                            Selecione a localização da unidade
+                                        </Label>
                                         <LMap v-model="markerPosition" />
                                         <input type="hidden" id="latitude" v-model="markerPosition.lat" />
                                         <input type="hidden" id="longitude" v-model="markerPosition.lng" />
                                     </div>
                                     
                                     <div class="flex flex-col space-y-1.5">
-                                        <Label for="framework">Framework</Label>
+                                        <Label for="unit">
+                                            Selecione a unidade pai
+                                        </Label>
                                         <Select>
-                                        <SelectTrigger id="framework">
-                                            <SelectValue placeholder="Select" />
+                                        <SelectTrigger id="unit">
+                                            <SelectValue placeholder="Selecione uma unidade" />
                                         </SelectTrigger>
                                         <SelectContent position="popper">
-                                            <SelectItem value="nuxt">
-                                                Nuxt.js
-                                            </SelectItem>
-                                            <SelectItem value="next">
-                                                Next.js
-                                            </SelectItem>
-                                            <SelectItem value="sveltekit">
-                                                SvelteKit
-                                            </SelectItem>
-                                            <SelectItem value="astro">
-                                                Astro
+                                            <SelectItem v-for="unit in units" :key="unit.id" :value="unit.id">
+                                                {{ unit.name }}
                                             </SelectItem>
                                         </SelectContent>
                                         </Select>
