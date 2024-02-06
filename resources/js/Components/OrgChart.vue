@@ -5,7 +5,7 @@ import { Button } from '@/Components/ui/button';
 import unitService from '@/services/unitService';
 
 // Definindo as propriedades que serão recebidas do componente pai
-const props = defineProps({
+const orgChartProps = defineProps({
   data: {
     type: Object,
     required: true
@@ -14,10 +14,10 @@ const props = defineProps({
 
 // Definindo as referências para o estado da hierarquia e os dados iniciais
 let hierarchyChanged = ref(false);
-let initialData = [];
+let initialHierarchyData = [];
 
 // Função para criar um nó no diagrama
-const createNode = (text) => {
+const createOrgChartNode = (text) => {
   const node = new go.Node("Auto", {
     background: "#ffffff",
     margin: 10,
@@ -76,7 +76,7 @@ const createNode = (text) => {
       e.diagram.model.updateTargetBindings(draggedNode.data);
       e.diagram.rebuildParts();
 
-      handleHierarchyChanged();
+      markHierarchyAsChanged();
     }
   };
 
@@ -84,12 +84,12 @@ const createNode = (text) => {
 };
 
 // Função para lidar com a alteração na hierarquia
-const handleHierarchyChanged = () => {
+const markHierarchyAsChanged = () => {
   hierarchyChanged.value = true;
 };
 
 // Função para cancelar as alterações
-const cancelChanges = () => {
+const cancelHierarchyChanges = () => {
   const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
   myDiagram.startTransaction("cancel Changes");
   while (myDiagram.undoManager.canUndo()) {
@@ -99,12 +99,12 @@ const cancelChanges = () => {
   hierarchyChanged.value = false;
 
   // Restaura o estado inicial dos nós
-  myDiagram.model.nodeDataArray = JSON.parse(JSON.stringify(initialData));
+  myDiagram.model.nodeDataArray = JSON.parse(JSON.stringify(initialHierarchyData));
   myDiagram.commitTransaction("cancel Changes");
 };
 
 // Função para salvar as alterações
-const saveChanges = async () => {
+const saveHierarchyChanges = async () => {
   const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
   myDiagram.startTransaction("save Changes");
   const data = myDiagram.model.nodeDataArray;
@@ -124,7 +124,7 @@ const saveChanges = async () => {
   myDiagram.zoomToFit();
   myDiagram.commitTransaction("save Changes");
 
-  initialData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
+  initialHierarchyData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
 };
 
 // Função executada quando o componente é montado
@@ -139,7 +139,7 @@ onMounted(() => {
     )
   });
 
-  myDiagram.nodeTemplate = createNode("Default Text");
+  myDiagram.nodeTemplate = createOrgChartNode("Default Text");
 
   myDiagram.linkTemplate = new go.Link({
     routing: go.Link.Orthogonal,
@@ -148,9 +148,9 @@ onMounted(() => {
       strokeWidth: 1,
       stroke: "#d1d5db", 
     }))
-  myDiagram.model = new go.TreeModel(props.data);
+  myDiagram.model = new go.TreeModel(orgChartProps.data);
 
-  initialData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
+  initialHierarchyData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
 
   myDiagram.zoomToFit();
 });
@@ -166,7 +166,7 @@ onMounted(() => {
 
   <!-- caso exista alguma alteração na hierarquia, exibe botões para salvar ou cancelar a alteração -->
   <div class="flex justify-end mt-4" v-if="hierarchyChanged">
-    <Button variant="destructive" class="mr-2" @click="cancelChanges">Cancelar</Button>
-    <Button @click="saveChanges">Salvar</Button>
+    <Button variant="destructive" class="mr-2" @click="cancelHierarchyChanges">Cancelar</Button>
+    <Button @click="saveHierarchyChanges">Salvar</Button>
   </div>
 </template>
