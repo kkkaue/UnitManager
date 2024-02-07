@@ -16,6 +16,38 @@ const orgChartProps = defineProps({
 let hierarchyChanged = ref(false);
 let initialHierarchyData = [];
 
+// Função para criar um menu
+const createContextMenu = () => {
+  const contextMenu = new go.Adornment("Vertical");
+
+  contextMenu.add(
+    new go.TextBlock("Opções"),
+    makeButton("Visualizar", (e, obj) => {
+      const node = obj.part.adornedPart;
+      // Aqui você pode adicionar a lógica para visualizar os dados da unidade
+      console.log("Visualizar", node.data);
+    }),
+    makeButton("Editar", (e, obj) => {
+      const node = obj.part.adornedPart;
+      // Aqui você pode adicionar a lógica para editar a unidade
+      console.log("Editar", node.data);
+    }),
+    makeButton("Excluir", (e, obj) => {
+      const node = obj.part.adornedPart;
+      // Aqui você pode adicionar a lógica para excluir a unidade
+      console.log("Excluir", node.data);
+    })
+  );
+
+  return contextMenu;
+}
+
+// Função para criar um botão para o menu de contexto
+const makeButton = (text, action) => {
+  const button = new go.TextBlock(text);
+  button.click = action;
+  return button;
+};
 // Função para criar um nó no diagrama
 const createOrgChartNode = (text) => {
   const node = new go.Node("Auto", {
@@ -79,6 +111,9 @@ const createOrgChartNode = (text) => {
       markHierarchyAsChanged();
     }
   };
+
+  // Adiciona o menu de contexto
+  node.contextMenu = createContextMenu();
 
   return node;
 };
