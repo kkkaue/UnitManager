@@ -47,14 +47,14 @@ const closeModal = (modalName) => {
 };
 
 // Função para lidar com uma unidade
-const handleUnit = (node, modalName) => {
+const handleUnitSelected = (node, modalName) => {
     const unit = unitProps.units.find((unit) => unit.id === node.key);
     selectedUnit.value = unit;
     parentOfSelectedUnit.value = unitProps.units.find((unit) => unit.id === selectedUnit.value.parent_id);
     openModal(modalName);
 };
 
-const handleUnitCreated = () => {
+const handleUnit = () => {
     transformedUnitsData = transformUnits(unitProps.unitsWithChildren);
 }
 </script>
@@ -87,16 +87,16 @@ const handleUnitCreated = () => {
                 <!-- Organograma das unidades -->
                 <OrgChart 
                     :data="transformedUnitsData"
-                    @view:unit="node => handleUnit(node, 'viewUnit')"
-                    @edit:unit="node => handleUnit(node, 'editUnit')"
-                    @delete:unit="node => handleUnit(node, 'deleteUnit')"
+                    @view:unit="node => handleUnitSelected(node, 'viewUnit')"
+                    @edit:unit="node => handleUnitSelected(node, 'editUnit')"
+                    @delete:unit="node => handleUnitSelected(node, 'deleteUnit')"
                 />
 
                 <AddUnitModal 
                     :units="unitProps.units" 
                     :isAddUnitModalOpen="modals.addUnit"
                     :onClosed="() => closeModal('addUnit')"
-                    @unit:created="handleUnitCreated"
+                    @unit:created="handleUnit"
                 />
 
                 <ViewUnitModal
@@ -112,12 +112,14 @@ const handleUnitCreated = () => {
                     :units="unitProps.units"
                     :isEditUnitModalOpen="modals.editUnit"
                     :onClosed="() => closeModal('editUnit')"
+                    @unit:updated="handleUnit"
                 />
 
                 <DeleteUnitModal
                     :unit="selectedUnit"
                     :isDeleteUnitModalOpen="modals.deleteUnit"
                     :onClosed="() => closeModal('deleteUnit')"
+                    @unit:deleted="handleUnit"
                 />
             </div>
         </div>

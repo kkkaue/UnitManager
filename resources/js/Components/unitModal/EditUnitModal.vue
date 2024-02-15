@@ -32,6 +32,8 @@ const props = defineProps({
     },
 });
 
+const emit = defineEmits(['unit:updated']);
+
 // Definindo a referência para o estado do modal de confirmação
 const isConfirmationModalOpen = ref(false);
 
@@ -73,8 +75,7 @@ const submitUnitForm = () => {
         onSuccess: () => {
             unitForm.reset();
             closeUnitModal();
-            // Recarregando a página para atualizar a hierarquia
-            window.location.reload();
+            emit('unit:updated');
         },
         onError: () => {
             isConfirmationModalOpen.value = false;

@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { Button } from '@/Components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/Components/ui/card'
@@ -19,6 +19,8 @@ const props = defineProps({
     },
 });
 
+const emit = defineEmits(['unit:deleted']);
+
 // Definindo a referência para o estado do formulário
 const unitForm = useForm({
     id: props.unit.id,
@@ -34,8 +36,7 @@ const deleteUnit = () => {
     unitForm.delete(route('units.destroy', props.unit.id), {
         onSuccess: () => {
             closeUnitModal();
-            // Recarregando a página para atualizar a hierarquia
-            window.location.reload();
+            emit('unit:deleted');
         },
     });
 };
