@@ -76,6 +76,9 @@ const submitUnitForm = () => {
             // Recarregando a página para atualizar a hierarquia
             window.location.reload();
         },
+        onError: () => {
+            isConfirmationModalOpen.value = false;
+        }
     });
 };
 
