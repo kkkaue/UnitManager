@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, ref, onMounted } from 'vue';
+import { defineProps, defineEmits, ref, onMounted, watch } from 'vue';
 import { Button } from '@/Components/ui/button';
 
 import unitService from '@/services/unitService';
@@ -206,6 +206,13 @@ onMounted(() => {
 
   initialHierarchyData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
 
+  myDiagram.zoomToFit();
+});
+
+watch(() => orgChartProps.data, (newData) => {
+  const myDiagram = go.Diagram.fromDiv("myDiagramDiv");
+  myDiagram.model = new go.TreeModel(newData);
+  initialHierarchyData = JSON.parse(JSON.stringify(myDiagram.model.nodeDataArray));
   myDiagram.zoomToFit();
 });
 

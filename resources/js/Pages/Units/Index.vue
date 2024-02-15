@@ -36,7 +36,7 @@ const selectedUnit = ref({});
 const parentOfSelectedUnit = ref({});
 
 // Tratando os dados das unidades
-const transformedUnitsData = transformUnits(unitProps.unitsWithChildren);
+var transformedUnitsData = transformUnits(unitProps.unitsWithChildren);
 
 // Funções para abrir e fechar os modais
 const openModal = (modalName) => {
@@ -53,6 +53,10 @@ const handleUnit = (node, modalName) => {
     parentOfSelectedUnit.value = unitProps.units.find((unit) => unit.id === selectedUnit.value.parent_id);
     openModal(modalName);
 };
+
+const handleUnitCreated = () => {
+    transformedUnitsData = transformUnits(unitProps.unitsWithChildren);
+}
 </script>
 
 <template>
@@ -92,6 +96,7 @@ const handleUnit = (node, modalName) => {
                     :units="unitProps.units" 
                     :isAddUnitModalOpen="modals.addUnit"
                     :onClosed="() => closeModal('addUnit')"
+                    @unit:created="handleUnitCreated"
                 />
 
                 <ViewUnitModal

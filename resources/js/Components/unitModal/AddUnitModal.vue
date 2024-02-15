@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref, onMounted, watch } from 'vue';
+import { defineProps, ref, onMounted, watch, defineEmits } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { Label } from '@/Components/ui/label'
 import { Input } from '@/Components/ui/input'
@@ -23,6 +23,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+const emit = defineEmits(['unit:created']);
 
 // Definindo a referência para o estado do formulário
 const markerPosition = ref({ lat: 0, lng: 0 });
@@ -50,8 +52,7 @@ const submitUnitForm = () => {
         onSuccess: () => {
             unitForm.reset();
             closeUnitModal();
-            // Recarregando a página para atualizar a hierarquia
-            window.location.reload();
+            emit('unit:created');
         },
     });
 };
