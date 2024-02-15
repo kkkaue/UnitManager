@@ -1,7 +1,9 @@
 <script setup>
 import { computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
+import { Button } from '@/Components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/Components/ui/alert'
+import { CardDescription, CardTitle } from '@/Components/ui/card';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -21,29 +23,35 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
 
 <template>
     <GuestLayout>
-        <Head title="Email Verification" />
+        <Head title="Verificação de E-mail" />
 
-        <div class="mb-4 text-sm text-gray-600">
-            Thanks for signing up! Before getting started, could you verify your email address by clicking on the link
-            we just emailed to you? If you didn't receive the email, we will gladly send you another.
-        </div>
+        <template #card-header>
+            <CardTitle>Verifique seu endereço de e-mail</CardTitle>
+            <CardDescription>
+                Obrigado por inscrever-se! Antes de começar, você poderia verificar seu endereço de e-mail clicando no link
+                acabamos de enviar um e-mail para você? Se você não recebeu o e-mail, teremos prazer em lhe enviar outro.
+            </CardDescription>
+        </template>
 
-        <div class="mb-4 font-medium text-sm text-green-600" v-if="verificationLinkSent">
-            A new verification link has been sent to the email address you provided during registration.
-        </div>
+        <Alert class="mb-4 bg-green-100 border-green-500 text-green-700 p-4" v-if="verificationLinkSent">
+            <AlertTitle>Link de verificação enviado</AlertTitle>
+            <AlertDescription>
+                Um novo link de verificação foi enviado para o endereço de e-mail que você forneceu durante o registro.
+            </AlertDescription>
+        </Alert>
 
         <form @submit.prevent="submit">
             <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Resend Verification Email
-                </PrimaryButton>
+                <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Reenviar email de verificação
+                </Button>
 
                 <Link
                     :href="route('logout')"
                     method="post"
                     as="button"
                     class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >Log Out</Link
+                    >Sair</Link
                 >
             </div>
         </form>

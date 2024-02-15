@@ -23,6 +23,7 @@
         "clsx": "^2.1.0",
         "leaflet": "^1.9.4",
         "lucide-vue-next": "^0.321.0",
+        "primevue": "^3.48.1",
         "radix-vue": "^1.4.0",
         "tailwind-merge": "^2.2.1",
         "tailwindcss-animate": "^1.0.7"
