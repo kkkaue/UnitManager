@@ -68,11 +68,12 @@ const handleUnit = (node, modalName) => {
 
         <!-- Conteúdo da página -->
         <div class="py-12">
-            <!-- Botão para adicionar unidades -->
             <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
+                <!-- Título da página -->
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-800 leading-tight">Organograma das Unidades</h2>
                 </div>
+                <!-- Botão para adicionar unidades -->
                 <div class="flex justify-end mb-4">
                     <Button @click="() => openModal('addUnit')">Adicionar Unidade</Button>
                 </div>
