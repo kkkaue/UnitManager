@@ -1,9 +1,9 @@
 <script setup>
 // Importando componentes e funções necessárias
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { transformUnits } from '../../unitUtils.js';
 import { defineProps, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import { transformUnits } from '../../unitUtils.js';
 import { Button } from '@/Components/ui/button'
 import OrgChart from '@/Components/OrgChart.vue';
 import AddUnitModal from '@/Components/unitModal/AddUnitModal.vue';
@@ -70,6 +70,9 @@ const handleUnit = (node, modalName) => {
         <div class="py-12">
             <!-- Botão para adicionar unidades -->
             <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-800 leading-tight">Organograma das Unidades</h2>
+                </div>
                 <div class="flex justify-end mb-4">
                     <Button @click="() => openModal('addUnit')">Adicionar Unidade</Button>
                 </div>
