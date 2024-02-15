@@ -2,7 +2,7 @@
 // Importando componentes e funções necessárias
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { transformUnits } from '../../unitUtils.js';
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { Button } from '@/Components/ui/button'
 import OrgChart from '@/Components/OrgChart.vue';
@@ -63,7 +63,9 @@ const handleUnit = (node, modalName) => {
     <AuthenticatedLayout>
         <!-- Cabeçalho da página -->
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Unidades</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Unidades
+            </h2>
         </template>
 
         <!-- Conteúdo da página -->
