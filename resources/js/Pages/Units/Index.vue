@@ -9,6 +9,7 @@ import OrgChart from '@/Components/OrgChart.vue';
 import AddUnitModal from '@/Components/unitModal/AddUnitModal.vue';
 import ViewUnitModal from '@/Components/unitModal/ViewUnitModal.vue';
 import EditUnitModal from '@/Components/unitModal/EditUnitModal.vue';
+import DeleteUnitModal from '@/Components/unitModal/DeleteUnitModal.vue';
 
 // Definindo as propriedades que serão recebidas do componente pai
 const unitProps = defineProps({
@@ -27,6 +28,7 @@ const modals = ref({
     addUnit: false,
     viewUnit: false,
     editUnit: false,
+    deleteUnit: false,
 });
 
 // Definindo referências reativas para a unidade selecionada e sua unidade pai
@@ -77,6 +79,7 @@ const handleUnit = (node, modalName) => {
                     :data="transformedUnitsData"
                     @view:unit="node => handleUnit(node, 'viewUnit')"
                     @edit:unit="node => handleUnit(node, 'editUnit')"
+                    @delete:unit="node => handleUnit(node, 'deleteUnit')"
                 />
 
                 <AddUnitModal 
@@ -98,6 +101,12 @@ const handleUnit = (node, modalName) => {
                     :units="unitProps.units"
                     :isEditUnitModalOpen="modals.editUnit"
                     :onClosed="() => closeModal('editUnit')"
+                />
+
+                <DeleteUnitModal
+                    :unit="selectedUnit"
+                    :isDeleteUnitModalOpen="modals.deleteUnit"
+                    :onClosed="() => closeModal('deleteUnit')"
                 />
             </div>
         </div>
