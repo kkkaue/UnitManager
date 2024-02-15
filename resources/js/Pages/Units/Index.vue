@@ -1,16 +1,14 @@
 <script setup>
 // Importando componentes e funções necessárias
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { defineProps, ref, onMounted, watch } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { defineProps, ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import { transformUnits } from '../../unitUtils.js';
 import { Button } from '@/Components/ui/button'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/Components/ui/card'
-import { Label } from '@/Components/ui/label'
-import { Input } from '@/Components/ui/input'
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/Components/ui/select'
 import OrgChart from '@/Components/OrgChart.vue';
-import LMap from '@/Components/LMap.vue';
+import AddUnitModal from '@/Components/unitModal/AddUnitModal.vue';
+import ViewUnitModal from '@/Components/unitModal/ViewUnitModal.vue';
+import EditUnitModal from '@/Components/unitModal/EditUnitModal.vue';
 
 // Definindo as propriedades que serão recebidas do componente pai
 const unitProps = defineProps({
@@ -24,51 +22,35 @@ const unitProps = defineProps({
     },
 });
 
-// Inicializando o formulário com valores nulos
-const unitForm = useForm({
-    name: null,
-    description: null,
-    email: null,
-    phone: null,
-    latitude: null,
-    longitude: null,
-    parent_id: null,
+// Definindo referências reativas para o estado dos modais
+const modals = ref({
+    addUnit: false,
+    viewUnit: false,
+    editUnit: false,
 });
+
+// Definindo referências reativas para a unidade selecionada e sua unidade pai
+const selectedUnit = ref({});
+const parentOfSelectedUnit = ref({});
 
 // Tratando os dados das unidades
 const transformedUnitsData = transformUnits(unitProps.unitsWithChildren);
 
-// Definindo a referência para o estado do modal e a posição do marcador
-const isAddUnitModalOpen = ref(false);
-const markerPosition = ref({ lat: 0, lng: 0 });
-
-// Funções para abrir e fechar o modal
-const openUnitModal = () => {
-    isAddUnitModalOpen.value = true;
+// Funções para abrir e fechar os modais
+const openModal = (modalName) => {
+    modals.value[modalName] = true;
 };
-const closeUnitModal = () => {
-    isAddUnitModalOpen.value = false;
+const closeModal = (modalName) => {
+    modals.value[modalName] = false;
 };
 
-// Função para enviar o formulário
-const submitUnitForm = () => {
-    unitForm.post(route('units.store'), {
-        onSuccess: () => {
-            unitForm.reset();
-            closeUnitModal();
-            // Recarregando a página para atualizar a hierarquia
-            window.location.reload();
-        },
-    });
+// Função para lidar com uma unidade
+const handleUnit = (node, modalName) => {
+    const unit = unitProps.units.find((unit) => unit.id === node.key);
+    selectedUnit.value = unit;
+    parentOfSelectedUnit.value = unitProps.units.find((unit) => unit.id === selectedUnit.value.parent_id);
+    openModal(modalName);
 };
-
-// Observando a posição do marcador e atualizando os valores de latitude e longitude do formulário
-onMounted(() => {
-    watch(markerPosition, (newValue) => {
-        unitForm.latitude = newValue.lat;
-        unitForm.longitude = newValue.lng;
-    });
-});
 </script>
 
 <template>
@@ -87,117 +69,36 @@ onMounted(() => {
             <!-- Botão para adicionar unidades -->
             <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
                 <div class="flex justify-end mb-4">
-                    <Button @click="openUnitModal">Adicionar Unidade</Button>
+                    <Button @click="() => openModal('addUnit')">Adicionar Unidade</Button>
                 </div>
                 
                 <!-- Organograma das unidades -->
-                <OrgChart :data="transformedUnitsData" />
+                <OrgChart 
+                    :data="transformedUnitsData"
+                    @view:unit="node => handleUnit(node, 'viewUnit')"
+                    @edit:unit="node => handleUnit(node, 'editUnit')"
+                />
 
-                <!-- Modal para adicionar unidade -->
-                <div v-if="isAddUnitModalOpen" class="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                    <Card class="w-1/3">
-                        <!-- Cabeçalho do modal -->
-                        <CardHeader>
-                            <CardTitle>Adicionar Unidade</CardTitle>
-                            <CardDescription>Adicione uma nova unidade no sistema</CardDescription>
-                        </CardHeader>
-                        <!-- Conteúdo do modal -->
-                        <CardContent>
-                            <!-- Formulário para adicionar unidade -->
-                            <form @submit.prevent="submitUnitForm">
-                                <!-- Campos do formulário -->
-                                <div class="grid items-center w-full gap-4">
-                                    <!-- Campos de nome e descrição -->
-                                    <div class="flex space-x-1.5 items-center">
-                                        <div class="w-full flex flex-col space-y-1.5">
-                                            <Label for="name" :class="{ 'text-red-600': unitForm.errors.name }">
-                                                Nome da Unidade
-                                            </Label>
-                                            <Input id="name" v-model="unitForm.name" :class="{ 'border-red-600': unitForm.errors.name }" placeholder="Digite o nome da unidade" autocomplete="off" />
-                                            <div class="text-red-600 text-sm" v-if="unitForm.errors.name">
-                                                {{ unitForm.errors.name }}
-                                            </div>
-                                        </div>
-                                        <div class="w-full flex flex-col space-y-1.5">
-                                            <Label for="description" :class="{ 'text-red-600': unitForm.errors.description }">
-                                                Descrição
-                                            </Label>
-                                            <Input id="description" v-model="unitForm.description" :class="{ 'border-red-600': unitForm.errors.description }" placeholder="Digite a descrição da unidade" autocomplete="off"/>
-                                            <div class="text-red-600 text-sm" v-if="unitForm.errors.description">
-                                                {{ unitForm.errors.description }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Campos de e-mail e telefone -->
-                                    <div class="flex space-x-1.5 items-center">
-                                        <div class="w-full flex flex-col space-y-1.5">
-                                            <Label for="email" :class="{ 'text-red-600': unitForm.errors.email }">
-                                                E-mail
-                                            </Label>
-                                            <Input id="email" v-model="unitForm.email" :class="{ 'border-red-600': unitForm.errors.email }" placeholder="Digite o e-mail da unidade" autocomplete="off" />
-                                            <div class="text-red-600 text-sm" v-if="unitForm.errors.email">
-                                                {{ unitForm.errors.email }}
-                                            </div>
-                                        </div>
-                                        <div class="w-full flex flex-col space-y-1.5">
-                                            <Label for="phone" :class="{ 'text-red-600': unitForm.errors.phone }">
-                                                Telefone
-                                            </Label>
-                                            <Input id="phone" v-model="unitForm.phone" :class="{ 'border-red-600': unitForm.errors.phone }" placeholder="Digite o telefone da unidade" autocomplete="off" />
-                                            <div class="text-red-600 text-sm" v-if="unitForm.errors.phone">
-                                                {{ unitForm.errors.phone }}
-                                            </div>
-                                        </div>
-                                    </div>
+                <AddUnitModal 
+                    :units="unitProps.units" 
+                    :isAddUnitModalOpen="modals.addUnit"
+                    :onClosed="() => closeModal('addUnit')"
+                />
 
-                                    <!-- Campo de localização -->
-                                    <div class="flex flex-col space-y-1.5">
-                                        <Label :class="{ 'text-red-600': unitForm.errors.latitude || unitForm.errors.longitude }">
-                                            Selecione a localização da unidade
-                                        </Label>
-                                        <LMap v-model="markerPosition" />
-                                        <div class="text-red-600 text-sm" v-if="unitForm.errors.latitude || unitForm.errors.longitude">
-                                            {{ unitForm.errors.latitude || unitForm.errors.longitude }}
-                                        </div>
-                                        <input type="hidden" id="latitude" v-model="unitForm.latitude" />
-                                        <input type="hidden" id="longitude" v-model="unitForm.longitude" />
-                                    </div>
-                                    
-                                    <!-- Campo de unidade pai -->
-                                    <div class="flex flex-col space-y-1.5">
-                                        <Label for="parent_id" :class="{ 'text-red-600': unitForm.errors.parent_id }">
-                                            Selecione a unidade pai
-                                        </Label>
-                                        <Select v-model="unitForm.parent_id" id="parent_id">
-                                            <SelectTrigger :class="{ 'border-red-600': unitForm.errors.parent_id }">
-                                                <SelectValue>
-                                                    {{ unitForm.parent_id ? units.find(unit => unit.id.toString() === unitForm.parent_id).name : 'Selecione a unidade pai' }}
-                                                </SelectValue>
-                                            </SelectTrigger>
-                                            <SelectContent position="popper">
-                                                <SelectItem v-for="unit in units" :key="unit.id" :value="unit.id.toString()">
-                                                    {{ unit.name }}
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <div class="text-red-600 text-sm" v-if="unitForm.errors.parent_id">
-                                            {{ unitForm.errors.parent_id }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </CardContent>
-                        <!-- Rodapé do modal -->
-                        <CardFooter class="flex justify-between px-6 pb-6">
-                            <Button variant="destructive" @click="closeUnitModal">
-                                Cancelar
-                            </Button>
-                            <Button type="submit" :disabled="unitForm.processing" @click="submitUnitForm">
-                                Adicionar
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                </div>
+                <ViewUnitModal
+                    :unit="selectedUnit"
+                    :parent="parentOfSelectedUnit"
+                    :isViewUnitModalOpen="modals.viewUnit"
+                    :onClosed="() => closeModal('viewUnit')"
+                />
+
+                <EditUnitModal
+                    :unit="selectedUnit"
+                    :parent="parentOfSelectedUnit"
+                    :units="unitProps.units"
+                    :isEditUnitModalOpen="modals.editUnit"
+                    :onClosed="() => closeModal('editUnit')"
+                />
             </div>
         </div>
     </AuthenticatedLayout>

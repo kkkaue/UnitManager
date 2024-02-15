@@ -145,7 +145,7 @@ it('should return error when unit latitude is not provided', function () {
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['latitude' => 'Você deve informar a a localização da unidade.']);
+    expect($response)->assertSessionHasErrors(['latitude' => 'Você deve informar a localização da unidade.']);
 });
 
 it('should return error when unit longitude is not provided', function () {
@@ -159,7 +159,7 @@ it('should return error when unit longitude is not provided', function () {
         'latitude'    => -23.5505199,
     ]);
 
-    expect($response)->assertSessionHasErrors(['longitude' => 'Você deve informar a a localização da unidade.']);
+    expect($response)->assertSessionHasErrors(['longitude' => 'Você deve informar a localização da unidade.']);
 });
 
 it('should return error when email format is invalid', function () {
@@ -189,7 +189,7 @@ it('should return error when latitude format is invalid', function () {
         'longitude'   => -46.6333094,
     ]);
 
-    expect($response)->assertSessionHasErrors(['latitude' => 'The latitude field must be a number.']);
+    expect($response)->assertSessionHasErrors(['latitude' => 'A localização informada é inválida.']);
 });
 
 it('should return error when longitude format is invalid', function () {
@@ -204,7 +204,7 @@ it('should return error when longitude format is invalid', function () {
         'longitude'   => 'invalid-longitude-format',
     ]);
 
-    expect($response)->assertSessionHasErrors(['longitude' => 'The longitude field must be a number.']);
+    expect($response)->assertSessionHasErrors(['longitude' => 'A localização informada é inválida.']);
 });
 
 it('should return error when unit name is longer than 255 characters', function () {

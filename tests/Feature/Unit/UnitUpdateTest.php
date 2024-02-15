@@ -12,8 +12,13 @@ it('should be able to update a unit', function () {
         'description' => 'Description of Unit Test Updated',
         'email'       => 'unit@test.com',
         'phone'       => '123456789',
+        'location'    => [
+            'latitude'  => -23.5505199,
+            'longitude' => -46.6333094,
+        ],
         'latitude'    => -23.5505199,
         'longitude'   => -46.6333094,
+        'parent_id'   => 1,
     ];
 
     $response = $this->actingAs($user)->putJson(route('units.update', $unit->id), $updatedData);
@@ -45,7 +50,7 @@ it('should return error when unit name is not provided', function () {
         'description' => 'Description of Unit Test Updated',
     ]);
 
-    $response->assertJsonValidationErrors(['name' => 'The name field is required.']);
+    $response->assertJsonValidationErrors(['name' => 'O campo nome é obrigatório.']);
 });
 
 it('should return error when unit description is not provided', function () {
@@ -56,7 +61,7 @@ it('should return error when unit description is not provided', function () {
         'name' => 'Unit Test Updated',
     ]);
 
-    $response->assertJsonValidationErrors(['description' => 'The description field is required.']);
+    $response->assertJsonValidationErrors(['description' => 'O campo descrição é obrigatório.']);
 });
 
 it('should return error when unit email is not provided', function () {
@@ -68,7 +73,7 @@ it('should return error when unit email is not provided', function () {
         'description' => 'Description of Unit Test Updated',
     ]);
 
-    $response->assertJsonValidationErrors(['email' => 'The email field is required.']);
+    $response->assertJsonValidationErrors(['email' => 'O campo e-mail é obrigatório.']);
 });
 
 it('should return error when unit email is not valid', function () {
@@ -81,7 +86,7 @@ it('should return error when unit email is not valid', function () {
         'email'       => 'invalid-email',
     ]);
 
-    $response->assertJsonValidationErrors(['email' => 'The email field must be a valid email address.']);
+    $response->assertJsonValidationErrors(['email' => 'O e-mail informado é inválido.']);
 });
 
 it('should return error when unit phone is not provided', function () {
@@ -94,7 +99,7 @@ it('should return error when unit phone is not provided', function () {
         'email'       => 'unit@test.com',
     ]);
 
-    $response->assertJsonValidationErrors(['phone' => 'The phone field is required.']);
+    $response->assertJsonValidationErrors(['phone' => 'O campo telefone é obrigatório.']);
 });
 
 it('should return error when unit latitude is not provided', function () {
@@ -107,7 +112,7 @@ it('should return error when unit latitude is not provided', function () {
         'email'       => 'unit@test.com'
     ]);
 
-    $response->assertJsonValidationErrors(['latitude' => 'The latitude field is required.']);
+    $response->assertJsonValidationErrors(['latitude' => 'Você deve informar a localização da unidade.']);
 });
 
 it('should return error when unit latitude is not valid', function () {
@@ -121,7 +126,7 @@ it('should return error when unit latitude is not valid', function () {
         'latitude'    => 'invalid-latitude',
     ]);
 
-    $response->assertJsonValidationErrors(['latitude' => 'The latitude field must be a number.']);
+    $response->assertJsonValidationErrors(['latitude' => 'A localização informada é inválida.']);
 });
 
 it('should return error when unit longitude is not provided', function () {
@@ -135,7 +140,7 @@ it('should return error when unit longitude is not provided', function () {
             'email'       => 'unit@test.com'
         ]);
 
-    $response->assertJsonValidationErrors(['longitude' => 'The longitude field is required.']);
+    $response->assertJsonValidationErrors(['longitude' => 'Você deve informar a localização da unidade.']);
 
 });
 
@@ -151,11 +156,12 @@ it('should return error when unit longitude is not valid', function () {
             'longitude'   => 'invalid-longitude',
         ]);
 
-    $response->assertJsonValidationErrors(['longitude' => 'The longitude field must be a number.']);
+    $response->assertJsonValidationErrors(['longitude' => 'A localização informada é inválida.']);
 });
 
 it('should return error when unit does not exist', function () {
     $user = User::factory()->create();
+    $unit = Unit::factory()->create();
 
     $response = $this->actingAs($user)
         ->putJson(route('units.update', 'invalid-id'), [
@@ -165,6 +171,11 @@ it('should return error when unit does not exist', function () {
             'phone'       => '123456789',
             'latitude'    => -23.5505199,
             'longitude'   => -46.6333094,
+            'location'    => [
+                'latitude'  => -23.5505199,
+                'longitude' => -46.6333094,
+            ],
+            'parent_id'   => $unit->id,
         ]);
 
     $response->assertNotFound();
