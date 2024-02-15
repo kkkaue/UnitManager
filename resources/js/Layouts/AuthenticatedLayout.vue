@@ -21,6 +21,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('units.index')" :active="route().current('units.index')">
                                     Unidades
                                 </NavLink>
+                                <NavLink :href="route('units.map')" :active="route().current('units.map')">
+                                    Mapa de unidades
+                                </NavLink>
                             </div>
                         </div>
 
@@ -103,6 +106,9 @@ const showingNavigationDropdown = ref(false);
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('units.index')" :active="route().current('units.index')">
                             Unidades
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('units.map')" :active="route().current('units.map')">
+                            Mapa de unidades
                         </ResponsiveNavLink>
                     </div>
 
