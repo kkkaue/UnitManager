@@ -188,6 +188,18 @@ class UnitController extends Controller
     public function destroy(string $id)
     {
         $unit = Unit::findOrFail($id);
+
+        // Verifica se a unidade é uma unidade raiz
+        if ($unit->parent_id === null) {
+            return redirect()->back()->with('error', 'A unidade raiz não pode ser removida.');
+        }
+
+        // Verifica se a unidade possui filhos
+        $childUnits = $unit->children;
+        if ($childUnits->isNotEmpty()) {
+            // Se tiver, altera o parent_id delas para um novo valor
+            $unit->children()->update(['parent_id' => $unit->parent_id]);
+        }
         $unit->delete();
 
         return redirect()->back()->with('success', 'Unidade removida com sucesso.');
