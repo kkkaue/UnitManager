@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, computed, ref, watch, onMounted } from 'vue';
+import { defineProps, ref, watch, onMounted, defineEmits } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { Label } from '@/Components/ui/label'
 import { Input } from '@/Components/ui/input'
