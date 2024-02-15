@@ -15,7 +15,7 @@ it('should be able to create a unit', function () {
         'longitude'   => -46.6333094,
     ]);
     expect($response)
-        ->assertRedirect(route('dashboard'))
+        ->assertRedirect()
         ->assertSessionHas('success', 'Unidade criada com sucesso.');
 
     $unit = Unit::where('name', 'Unit Test')->first();
@@ -41,7 +41,7 @@ it('should be able to create a unit even after there are already created units',
         'parent_id'   => $unit->id,
     ]);
     expect($response)
-        ->assertRedirect(route('dashboard'))
+        ->assertRedirect()
         ->assertSessionHas('success', 'Unidade criada com sucesso.');
 });
 

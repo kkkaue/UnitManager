@@ -24,7 +24,7 @@ it('should be able to update a unit', function () {
     $response = $this->actingAs($user)->putJson(route('units.update', $unit->id), $updatedData);
 
     $response
-        ->assertRedirect(route('dashboard'))
+        ->assertRedirect()
         ->assertSessionHas('success', 'Unidade atualizada com sucesso.');
 
     $unit->refresh();

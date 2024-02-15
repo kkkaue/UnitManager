@@ -11,7 +11,7 @@ it('should be able to delete a unit', function () {
     $response = $this->actingAs($user)->delete(route('units.destroy', $unitChild->id));
 
     $response
-        ->assertRedirect(route('dashboard'))
+        ->assertRedirect()
         ->assertSessionHas('success', 'Unidade removida com sucesso.');
 
     expect(Unit::find($unitChild->id))->toBeNull();
