@@ -24,6 +24,18 @@ class UnitController extends Controller
     }
 
     /**
+     * Exibe o mapa com as unidades.
+     */
+    public function map()
+    {
+        $units = Unit::all();
+
+        return Inertia::render('Units/Map', [
+            'units' => $units,
+        ]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -168,6 +180,9 @@ class UnitController extends Controller
         return redirect()->back()->with('success', 'Unidade atualizada com sucesso.');
     }
 
+    /**
+     * Atualiza a hierarquia das unidades.
+     */
     public function updateHierarchy(Request $request)
     {
         foreach ($request->units as $update) {
