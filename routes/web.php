@@ -3,7 +3,6 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +16,8 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    return redirect()->route('units.index');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -26,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('units', \App\Http\Controllers\UnitController::class);
+    Route::get('/map', [\App\Http\Controllers\UnitController::class, 'map'])->name('units.map');
     Route::post('/units/update-hierarchy', [\App\Http\Controllers\UnitController::class, 'updateHierarchy'])->name('units.update-hierarchy');
 });
 
