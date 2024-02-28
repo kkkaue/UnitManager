@@ -21,6 +21,7 @@ sources:
     - 'grunt'
     - 'library'
     - '.git'
+    - 'vendor'
     
 # Specify the languages you would like to Scan. Default is all Detected
 #languages: 'JAVA,CPP'
