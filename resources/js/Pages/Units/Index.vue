@@ -1,7 +1,7 @@
 <script setup>
 // Importando componentes e funções necessárias
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { transformUnits } from '../../unitUtils.js';
+import { transformUnits } from '@/unitUtils.js';
 import { ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { Button } from '@/Components/ui/button'
