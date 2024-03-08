@@ -38,10 +38,8 @@ const closeUnitModal = () => {
 </script>
 
 <template>
-    <!-- Modal para visualizar unidade -->
     <div v-if="isViewUnitModalOpen" class="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <Card class="w-1/3">
-            <!-- Cabeçalho do modal -->
             <CardHeader>
                 <CardTitle>
                     Visualizar Unidade
@@ -50,11 +48,8 @@ const closeUnitModal = () => {
                     Visualize os detalhes da unidade
                 </CardDescription>
             </CardHeader>
-            <!-- Conteúdo do modal -->
             <CardContent>
-                <!-- Campos do formulário -->
                 <div class="grid items-center w-full gap-4">
-                    <!-- Campos de nome e descrição -->
                     <div class="flex space-x-1.5 items-center">
                         <div class="w-full flex flex-col space-y-1.5">
                             <Label for="name">
@@ -69,7 +64,6 @@ const closeUnitModal = () => {
                             <Input id="description" v-model="unit.description" disabled/>
                         </div>
                     </div>
-                    <!-- Campos de e-mail e telefone -->
                     <div class="flex space-x-1.5 items-center">
                         <div class="w-full flex flex-col space-y-1.5">
                             <Label for="email">
@@ -84,16 +78,12 @@ const closeUnitModal = () => {
                             <Input id="phone" v-model="unit.phone" disabled />
                         </div>
                     </div>
-
-                    <!-- Campo de localização -->
                     <div class="flex flex-col space-y-1.5">
                         <Label>
                             Localização da unidade
                         </Label>
                         <LMap :modelValue="unit.location" :disabled="true" />
                     </div>
-                    
-                    <!-- Campo de unidade pai -->
                     <div class="flex flex-col space-y-1.5">
                         <Label for="parent">
                             Unidade pai
@@ -102,7 +92,6 @@ const closeUnitModal = () => {
                     </div>
                 </div>
             </CardContent>
-            <!-- Rodapé do modal -->
             <CardFooter class="flex justify-between px-6 pb-6">
                 <Button variant="destructive" @click="closeUnitModal">
                     Fechar

@@ -29,14 +29,12 @@ onMounted(() => {
 
 <template>
     <Head title="Mapa de unidades" />
-
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Mapa de unidades
             </h2>
         </template>
-
         <div class="py-12">
             <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
                 <div id="map" class="w-full h-full"></div>

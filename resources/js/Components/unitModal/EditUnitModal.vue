@@ -125,10 +125,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <!-- Modal para editar unidade -->
     <div v-if="isEditUnitModalOpen" class="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <Card class="w-1/3">
-            <!-- Cabeçalho do modal -->
             <CardHeader>
                 <CardTitle>
                     Editar Unidade
@@ -137,13 +135,9 @@ onMounted(() => {
                     Edite os detalhes da unidade
                 </CardDescription>
             </CardHeader>
-            <!-- Conteúdo do modal -->
             <CardContent>
-                <!-- Formulário para editar unidade -->
                 <form @submit.prevent="submitUnitForm">
-                    <!-- Campos do formulário -->
                     <div class="grid items-center w-full gap-4">
-                        <!-- Campos de nome e descrição -->
                         <div class="flex space-x-1.5 items-center">
                             <div class="w-full flex flex-col space-y-1.5">
                                 <Label for="name" :class="{ 'text-red-600': unitForm.errors.name }">
@@ -164,7 +158,6 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        <!-- Campos de e-mail e telefone -->
                         <div class="flex space-x-1.5 items-center">
                             <div class="w-full flex flex-col space-y-1.5">
                                 <Label for="email" :class="{ 'text-red-600': unitForm.errors.email }">
@@ -186,7 +179,6 @@ onMounted(() => {
                             </div>
                         </div>
 
-                        <!-- Campo de localização -->
                         <div class="flex flex-col space-y-1.5">
                             <Label :class="{ 'text-red-600': unitForm.errors.latitude || unitForm.errors.longitude }">
                                 Selecione a localização da unidade
@@ -199,7 +191,6 @@ onMounted(() => {
                             <input type="hidden" id="longitude" v-model="unitForm.longitude" />
                         </div>
                         
-                        <!-- Campo de unidade pai -->
                         <div class="flex flex-col space-y-1.5">
                             <Label for="parent_id" :class="{ 'text-red-600': unitForm.errors.parent_id }">
                                 Unidade pai
@@ -211,7 +202,6 @@ onMounted(() => {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <div v-for="unit in units" :key="unit.id">
-                                            <!-- mostra as opções diferentes da unidade selecionada -->
                                             <SelectItem v-if="unit.id !== props.unit.id" :value="unit.id.toString()">
                                                 {{ unit.name }}
                                             </SelectItem>
@@ -230,7 +220,6 @@ onMounted(() => {
                     </div>
                 </form>
             </CardContent>
-            <!-- Rodapé do modal -->
             <CardFooter class="flex justify-between px-6 pb-6">
                 <Button variant="destructive" @click="closeUnitModal">
                     Fechar
@@ -241,11 +230,9 @@ onMounted(() => {
             </CardFooter>
         </Card>
     </div>
-    <!-- Modal de Confirmação de edição unidade -->
     <div v-if="isConfirmationModalOpen"
     class="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <Card class="w-1/3">
-            <!-- Cabeçalho do modal -->
             <CardHeader>
                 <CardTitle>
                     Editar Unidade
@@ -254,13 +241,11 @@ onMounted(() => {
                     Tem certeza que deseja editar a unidade {{ unit.name }}?
                 </CardDescription>
             </CardHeader>
-            <!-- Conteúdo do modal -->
             <CardContent>
                 <p class="text-sm text-gray-500">
                     Ao editar a unidade, todos os dados relacionados a ela serão atualizados.
                 </p>
             </CardContent>
-            <!-- Rodapé do modal -->
             <CardFooter class="flex justify-between px-6 pb-6">
                 <Button type="button" variant="destructive" @click="closeUnitModal">
                     Cancelar

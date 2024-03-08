@@ -40,7 +40,6 @@ const unitForm = useForm({
     parent_id: null,
 });
 
-
 // Função para fechar o modal
 const closeUnitModal = () => {
     props.onClosed();
@@ -67,21 +66,15 @@ onMounted(() => {
 </script>
 
 <template>
-    <!-- Modal para adicionar unidade -->
     <div v-if="isAddUnitModalOpen" class="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <Card class="w-1/3">
-            <!-- Cabeçalho do modal -->
             <CardHeader>
                 <CardTitle>Adicionar Unidade</CardTitle>
                 <CardDescription>Adicione uma nova unidade no sistema</CardDescription>
             </CardHeader>
-            <!-- Conteúdo do modal -->
             <CardContent>
-                <!-- Formulário para adicionar unidade -->
                 <form @submit.prevent="submitUnitForm">
-                    <!-- Campos do formulário -->
                     <div class="grid items-center w-full gap-4">
-                        <!-- Campos de nome e descrição -->
                         <div class="flex space-x-1.5 items-center">
                             <div class="w-full flex flex-col space-y-1.5">
                                 <Label for="name" :class="{ 'text-red-600': unitForm.errors.name }">
@@ -102,7 +95,6 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        <!-- Campos de e-mail e telefone -->
                         <div class="flex space-x-1.5 items-center">
                             <div class="w-full flex flex-col space-y-1.5">
                                 <Label for="email" :class="{ 'text-red-600': unitForm.errors.email }">
@@ -123,8 +115,6 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Campo de localização -->
                         <div class="flex flex-col space-y-1.5">
                             <Label :class="{ 'text-red-600': unitForm.errors.latitude || unitForm.errors.longitude }">
                                 Selecione a localização da unidade
@@ -137,7 +127,6 @@ onMounted(() => {
                             <input type="hidden" id="longitude" v-model="unitForm.longitude" />
                         </div>
                         
-                        <!-- Campo de unidade pai -->
                         <div class="flex flex-col space-y-1.5">
                             <Label for="parent_id" :class="{ 'text-red-600': unitForm.errors.parent_id }">
                                 Selecione a unidade pai
@@ -161,7 +150,6 @@ onMounted(() => {
                     </div>
                 </form>
             </CardContent>
-            <!-- Rodapé do modal -->
             <CardFooter class="flex justify-between px-6 pb-6">
                 <Button variant="destructive" @click="closeUnitModal">
                     Cancelar

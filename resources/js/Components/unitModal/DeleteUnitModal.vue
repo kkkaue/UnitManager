@@ -43,10 +43,8 @@ const deleteUnit = () => {
 </script>
 
 <template>
-    <!-- Modal para Excluir unidade -->
     <div v-if="isDeleteUnitModalOpen" class="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <Card class="w-1/3">
-            <!-- Cabeçalho do modal -->
             <CardHeader>
                 <CardTitle>
                     Excluir unidade
@@ -55,17 +53,14 @@ const deleteUnit = () => {
                     Tem certeza que deseja excluir a unidade {{ unit.name }}?
                 </CardDescription>
             </CardHeader>
-            <!-- Conteúdo do modal -->
             <CardContent>
                 <p class="text-sm text-gray-500">
                     Ao excluir a unidade, todos os dados relacionados a ela serão perdidos.
                 </p>
-
                 <p class="text-sm text-gray-500">
                     Caso a unidade possua filhos, eles serão movidos para a unidade pai.
                 </p>
             </CardContent>
-            <!-- Rodapé do modal -->
             <CardFooter class="flex justify-between px-6 pb-6">
                 <Button type="button" variant="ghost" @click="closeUnitModal">
                     Cancelar

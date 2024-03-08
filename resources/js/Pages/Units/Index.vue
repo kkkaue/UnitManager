@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { transformUnits } from '@/unitUtils.js';
 import { ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import { Button } from '@/Components/ui/button'
+import { Button } from '@/components/ui/button'
 import OrgChart from '@/Components/OrgChart.vue';
 import AddUnitModal from '@/Components/unitModal/AddUnitModal.vue';
 import ViewUnitModal from '@/Components/unitModal/ViewUnitModal.vue';
@@ -60,52 +60,39 @@ const handleUnit = () => {
 </script>
 
 <template>
-    <!-- Definindo o título da página -->
     <Head title="Unidades" />
-
-    <!-- Layout autenticado -->
     <AuthenticatedLayout>
-        <!-- Cabeçalho da página -->
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Unidades
             </h2>
         </template>
-
-        <!-- Conteúdo da página -->
         <div class="py-12">
             <div class="mx-auto sm:px-6 lg:px-8 items-center justify-start h-screen">
-                <!-- Título da página -->
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-800 leading-tight">Organograma das Unidades</h2>
                 </div>
-                <!-- Botão para adicionar unidades -->
                 <div class="flex justify-end mb-4">
                     <Button @click="() => openModal('addUnit')">Adicionar Unidade</Button>
                 </div>
-                
-                <!-- Organograma das unidades -->
                 <OrgChart 
                     :data="transformedUnitsData"
                     @view:unit="node => handleUnitSelected(node, 'viewUnit')"
                     @edit:unit="node => handleUnitSelected(node, 'editUnit')"
                     @delete:unit="node => handleUnitSelected(node, 'deleteUnit')"
                 />
-
                 <AddUnitModal 
                     :units="unitProps.units" 
                     :isAddUnitModalOpen="modals.addUnit"
                     :onClosed="() => closeModal('addUnit')"
                     @unit:created="handleUnit"
                 />
-
                 <ViewUnitModal
                     :unit="selectedUnit"
                     :parent="parentOfSelectedUnit"
                     :isViewUnitModalOpen="modals.viewUnit"
                     :onClosed="() => closeModal('viewUnit')"
                 />
-
                 <EditUnitModal
                     :unit="selectedUnit"
                     :parent="parentOfSelectedUnit"
@@ -114,7 +101,6 @@ const handleUnit = () => {
                     :onClosed="() => closeModal('editUnit')"
                     @unit:updated="handleUnit"
                 />
-
                 <DeleteUnitModal
                     :unit="selectedUnit"
                     :isDeleteUnitModalOpen="modals.deleteUnit"
