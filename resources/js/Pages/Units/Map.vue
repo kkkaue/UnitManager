@@ -14,6 +14,7 @@ const unitProps = defineProps({
 const map = ref(null);
 
 onMounted(() => {
+    console.log(unitProps.units);
     map.value = Leaflet.map('map').setView([0.0396198, -51.0455364], 13);
     Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -21,7 +22,9 @@ onMounted(() => {
 
     unitProps.units.forEach((unit) => {
         if (unit.latitude && unit.longitude) {
-            Leaflet.marker([unit.latitude, unit.longitude]).addTo(map.value);
+            Leaflet.marker([unit.latitude, unit.longitude])
+                .addTo(map.value)
+                .bindPopup(`<h1>${unit.name}</h1><br><p style="margin: 0">${unit.description}</p>`);
         }
     });
 });
