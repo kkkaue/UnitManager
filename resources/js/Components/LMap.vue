@@ -74,6 +74,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- Definindo o elemento do mapa -->
   <div id="map" class="w-full h-60"></div>
 </template>

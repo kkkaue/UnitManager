@@ -36,18 +36,14 @@ class UnitController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+        $phone = $request->input('phone');
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        $request->merge(['phone' => $phone]);
+
         $rules = [
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
@@ -100,26 +96,14 @@ class UnitController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
+        $phone = $request->input('phone');
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        $request->merge(['phone' => $phone]);
+        
         $rules = [
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],

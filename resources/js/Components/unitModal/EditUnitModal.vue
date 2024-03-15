@@ -172,7 +172,7 @@ onMounted(() => {
                                 <Label for="phone" :class="{ 'text-red-600': unitForm.errors.phone }">
                                     Telefone
                                 </Label>
-                                <Input id="phone" v-model="unitForm.phone" :class="{ 'border-red-600': unitForm.errors.phone }"/>
+                                <Input id="phone" v-mask="'(##) #####-####'" v-model="unitForm.phone" :class="{ 'border-red-600': unitForm.errors.phone }"/>
                                 <div class="text-red-600 text-sm" v-if="unitForm.errors.phone">
                                     {{ unitForm.errors.phone }}
                                 </div>

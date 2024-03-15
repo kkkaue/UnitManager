@@ -6,7 +6,6 @@ import { Input } from '@/Components/ui/input'
 import { Button } from '@/Components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/Components/ui/card'
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/Components/ui/select'
-
 import LMap from '@/Components/LMap.vue';
 
 const props = defineProps({
@@ -109,7 +108,7 @@ onMounted(() => {
                                 <Label for="phone" :class="{ 'text-red-600': unitForm.errors.phone }">
                                     Telefone
                                 </Label>
-                                <Input id="phone" v-model="unitForm.phone" :class="{ 'border-red-600': unitForm.errors.phone }" placeholder="Digite o telefone da unidade" autocomplete="off" />
+                                <Input id="phone" v-mask="'(##) #####-####'" v-model="unitForm.phone" :class="{ 'border-red-600': unitForm.errors.phone }" placeholder="Digite o telefone da unidade" autocomplete="off" />
                                 <div class="text-red-600 text-sm" v-if="unitForm.errors.phone">
                                     {{ unitForm.errors.phone }}
                                 </div>

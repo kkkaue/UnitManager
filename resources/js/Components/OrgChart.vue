@@ -123,6 +123,10 @@ const createOrgChartNode = (text) => {
     const droppedOnNode = obj.part;
 
     if (draggedNode !== null && droppedOnNode !== null) {
+      const draggedNodeIsParent = checkIfChild(draggedNode, droppedOnNode);
+      if (draggedNodeIsParent) {
+        return;
+      }
       draggedNode.data.parent = droppedOnNode.data.key;
       e.diagram.model.updateTargetBindings(draggedNode.data);
       e.diagram.rebuildParts();
@@ -136,6 +140,15 @@ const createOrgChartNode = (text) => {
 
   return node;
 };
+
+// Função para verificar se um nó é filho de outro
+function checkIfChild(parentNode, childNode) {
+  if (childNode.data.parent === parentNode.data.key) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 // Função para lidar com a alteração na hierarquia
 const markHierarchyAsChanged = () => {
@@ -219,11 +232,9 @@ watch(() => orgChartProps.data, (newData) => {
 </script>
 
 <template>
-  <!-- Exibe o diagrama -->
   <div class="w-full h-3/5" @hierarchyChanged="hierarchyChanged = true">
     <div id="myDiagramDiv" class="w-full h-full bg-gray-100 border border-gray-200 rounded-md shadow-md">
     </div>
-    <!-- Menu de contexto -->
     <div id="contextMenu" class="flex-col border-4 border-white bg-white rounded-md shadow-lg" style="position: absolute; z-index: 1000; display: none;">
       <button id="viewButton" class="w-full text-sm font-medium items-center justify-start flex rounded border-gray-200 hover:bg-gray-100 py-1 px-4 text-left hover:text-gray-900">
         <BadgeInfo class="mr-2 text-gray-900" size="16" /> Visualizar
@@ -236,8 +247,6 @@ watch(() => orgChartProps.data, (newData) => {
       </button>
     </div>
   </div>
-
-  <!-- caso exista alguma alteração na hierarquia, exibe botões para salvar ou cancelar a alteração -->
   <div class="flex justify-end mt-4" v-if="hierarchyChanged">
     <Button variant="destructive" class="mr-2" @click="cancelHierarchyChanges">Cancelar</Button>
     <Button @click="saveHierarchyChanges">Salvar</Button>

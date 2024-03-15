@@ -75,7 +75,7 @@ const closeUnitModal = () => {
                             <Label for="phone">
                                 Telefone
                             </Label>
-                            <Input id="phone" v-model="unit.phone" disabled />
+                            <Input id="phone" v-mask="'(##) #####-####'" v-model="unit.phone" disabled />
                         </div>
                     </div>
                     <div class="flex flex-col space-y-1.5">

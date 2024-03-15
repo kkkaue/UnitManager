@@ -250,7 +250,7 @@ it('should return error when unit phone is longer than 255 characters', function
         'name'        => 'Unit Test',
         'description' => 'Description of Unit Test',
         'email'       => 'unit@test.com',
-        'phone'       => str_repeat('a', 256),
+        'phone'       => str_repeat('9', 256),
         'latitude'    => -23.5505199,
         'longitude'   => -46.6333094,
     ]);
